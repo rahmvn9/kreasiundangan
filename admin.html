@@ -37,15 +37,17 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
 <body>
 <div class="wrap">
   <h1>Admin Pesanan <span data-brand></span></h1>
-  <p class="sub">Isi data pesanan pelanggan, lalu salin link undangannya. Halaman ini tidak dicantumkan di menu situs, simpan alamatnya untuk dirimu sendiri.</p>
+  <p class="sub">Isi data pesanan pelanggan, lalu salin link undangannya. <a href="dashboard-tema.html">Buka Dashboard Pembuat Tema</a>. Halaman admin tidak dicantumkan di menu situs; simpan alamatnya secara pribadi.</p>
 
   <form id="f" autocomplete="off">
     <fieldset><legend>Pesanan</legend>
       <div class="row">
         <div><label>Kode pesanan (huruf kecil, angka, strip)</label><input id="kode" placeholder="contoh: fajar-salsa" maxlength="40"><div class="hint">Dipakai untuk nama file dan link pendek.</div></div>
-        <div><label>Tema</label><select id="tema">
+        <div><label>Tema dasar</label><select id="tema">
           <option value="t-elegan">Elegan Emas</option><option value="t-rustic">Rustic Floral</option>
-          <option value="t-maroon" selected>Maroon Batik</option><option value="t-ceria">Ceria Anak</option></select></div>
+          <option value="t-maroon" selected>Maroon Batik</option><option value="t-ceria">Ceria Anak</option></select>
+          <label style="margin-top:8px">Impor preset dashboard (.json)</label><input id="preset-load" type="file" accept=".json,application/json">
+          <div class="hint">Preset diterapkan pada undangan yang dibuat dari form ini.</div></div>
       </div>
       <div class="row">
         <div><label>Jenis acara</label><select id="jenis"><option value="nikah">Pernikahan</option><option value="ultah">Ulang tahun</option><option value="khitan">Khitanan</option><option value="lain">Lainnya</option></select></div>
@@ -65,6 +67,9 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
       <div class="row">
         <div><label>Keterangan 1 (orang tua)</label><input id="ortu1" value="Putra Bapak Hasan &amp; Ibu Wati"></div>
         <div id="box-ortu2"><label>Keterangan 2 (orang tua)</label><input id="ortu2" value="Putri Bapak Rudi &amp; Ibu Dewi"></div>
+      </div><div class="row">
+        <div><label>Foto individu mempelai 1</label><input id="fpeople1" placeholder="assets/pesanan/kode/mempelai-1.webp"></div>
+        <div id="box-fpeople2"><label>Foto individu mempelai 2</label><input id="fpeople2" placeholder="assets/pesanan/kode/mempelai-2.webp"></div>
       </div>
     </fieldset>
 
@@ -88,6 +93,16 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
       </div>
     </fieldset>
 
+    <fieldset><legend>Love Story (opsional)</legend>
+      <div class="row"><div><label>Judul bagian</label><input id="storytitle" value="Kisah Kami"></div><div><label>Judul utama</label><input id="storyheading" value="Love Story"></div></div>
+      <p class="hint">Isi maksimal tiga momen. Bagian tampil jika setidaknya satu judul atau cerita diisi.</p>
+      <div class="row"><div><label>Momen 1 — judul</label><input id="st1title" placeholder="Awal Bertemu"></div><div><label>Tanggal / periode</label><input id="st1date" placeholder="Januari 2022"></div></div>
+      <div class="row one"><div><label>Cerita momen 1</label><textarea id="st1text" placeholder="Ceritakan awal kisah kalian..."></textarea></div></div>
+      <div class="row"><div><label>Momen 2 — judul</label><input id="st2title" placeholder="Menjalin Komitmen"></div><div><label>Tanggal / periode</label><input id="st2date" placeholder="Agustus 2023"></div></div>
+      <div class="row one"><div><label>Cerita momen 2</label><textarea id="st2text" placeholder="Cerita perjalanan hubungan..."></textarea></div></div>
+      <div class="row"><div><label>Momen 3 — judul</label><input id="st3title" placeholder="Menuju Hari Bahagia"></div><div><label>Tanggal / periode</label><input id="st3date" placeholder="2026"></div></div>
+      <div class="row one"><div><label>Cerita momen 3</label><textarea id="st3text" placeholder="Cerita langkah selanjutnya..."></textarea></div></div>
+    </fieldset>
     <fieldset><legend>Foto &amp; musik</legend>
       <p class="hint" style="margin-bottom:10px">Isi dengan alamat foto: file di situs ini (contoh <b>assets/pesanan/fajar-salsa/1.webp</b>) atau alamat https. Kosongkan jika tidak ada.</p>
       <div class="row">
@@ -144,7 +159,7 @@ assets/foto/maroon-8.webp</textarea></div></div>
 
   function syncJenis() {
     var nikah = $("jenis").value === "nikah";
-    ["box-nama2", "box-lengkap2", "box-ortu2"].forEach(function (i) { $(i).classList.toggle("hide", !nikah); });
+    ["box-nama2", "box-lengkap2", "box-ortu2", "box-fpeople2"].forEach(function (i) { $(i).classList.toggle("hide", !nikah); });
     var cur = $("heading").value;
     if (Object.keys(DEF).some(function (k) { return DEF[k] === cur; })) $("heading").value = DEF[$("jenis").value];
     $("pjudul").value = nikah ? "Kedua Mempelai" : "Yang Berbahagia";
@@ -163,9 +178,13 @@ assets/foto/maroon-8.webp</textarea></div></div>
       quoteTitle: $("qjudul").value.trim(), quote: $("quote").value.trim(),
       peopleTitle: $("pjudul").value.trim(),
       people: nikah
-        ? [{ icon: "🤵", name: $("lengkap1").value.trim(), sub: $("ortu1").value.trim() },
-           { icon: "👰", name: $("lengkap2").value.trim(), sub: $("ortu2").value.trim() }]
-        : [{ icon: "🎉", name: $("lengkap1").value.trim(), sub: $("ortu1").value.trim() }],
+        ? [{ icon: "🤵", name: $("lengkap1").value.trim(), sub: $("ortu1").value.trim(), photo: $("fpeople1").value.trim() },
+           { icon: "👰", name: $("lengkap2").value.trim(), sub: $("ortu2").value.trim(), photo: $("fpeople2").value.trim() }]
+        : [{ icon: "🎉", name: $("lengkap1").value.trim(), sub: $("ortu1").value.trim(), photo: $("fpeople1").value.trim() }],
+      loveStoryTitle: $("storytitle").value.trim(), loveStoryHeading: $("storyheading").value.trim(),
+      loveStory: [1,2,3].map(function(i){return {title:$("st"+i+"title").value.trim(),date:$("st"+i+"date").value.trim(),text:$("st"+i+"text").value.trim()};}).filter(function(x){return x.title||x.text;}),
+      galleryAnimation: window.KREASI_THEME_PRESET && window.KREASI_THEME_PRESET.galleryAnimation || "fade",
+      themeStyle: window.KREASI_THEME_PRESET && window.KREASI_THEME_PRESET.themeStyle || undefined,
       events: [],
       coverImg: $("fcover").value.trim(), coverPos: "center 20%",
       heroImg: $("fhero").value.trim(), heroPos: "center 20%",
@@ -191,8 +210,10 @@ assets/foto/maroon-8.webp</textarea></div></div>
     set("heading", d.heading); set("kode", d.kode);
     var n = d.names || [], p = d.people || [];
     set("nama1", n[0]); set("nama2", n[1]);
-    set("lengkap1", p[0] && p[0].name); set("ortu1", p[0] && p[0].sub);
-    set("lengkap2", p[1] && p[1].name); set("ortu2", p[1] && p[1].sub);
+    set("lengkap1", p[0] && p[0].name); set("ortu1", p[0] && p[0].sub); set("fpeople1",p[0]&&p[0].photo);
+    set("lengkap2", p[1] && p[1].name); set("ortu2", p[1] && p[1].sub); set("fpeople2",p[1]&&p[1].photo);
+    set("storytitle",d.loveStoryTitle);set("storyheading",d.loveStoryHeading);
+    [1,2,3].forEach(function(i){var x=(d.loveStory||[])[i-1]||{};set("st"+i+"title",x.title||"");set("st"+i+"date",x.date||"");set("st"+i+"text",x.text||"");});
     set("tanggal", d.date); set("rsvp", d.rsvpWa);
     set("qjudul", d.quoteTitle); set("quote", d.quote); set("pjudul", d.peopleTitle);
     set("cjudul", d.closingTitle); set("closing", d.closing);
@@ -262,6 +283,7 @@ assets/foto/maroon-8.webp</textarea></div></div>
     try { localStorage.setItem("kreasi-draft", JSON.stringify(collect())); alert("Draft tersimpan di browser ini."); }
     catch (e) { alert("Browser tidak mengizinkan penyimpanan draft."); }
   };
+  $("preset-load").onchange=function(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var p=JSON.parse(r.result);if(!p||!p.themeStyle)throw 0;if(["t-elegan","t-rustic","t-ceria","t-maroon"].indexOf(p.theme)>=0)$("tema").value=p.theme;window.KREASI_THEME_PRESET={themeStyle:p.themeStyle,galleryAnimation:p.galleryAnimation||"fade"};alert("Preset tema diterapkan pada pesanan ini.");}catch(e){alert("Preset tidak valid.");}};r.readAsText(f);ev.target.value="";};
   $("b-load").onchange = function (ev) {
     var f = ev.target.files[0]; if (!f) return;
     var r = new FileReader();
