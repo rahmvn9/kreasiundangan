@@ -39,10 +39,29 @@
   var names = D.names.filter(Boolean).join(" & ");
   document.title = (LIVE ? "Undangan " : "Demo ") + names;
 
+  var themeStyle = D.themeStyle || {};
+  var styleVars = {accent:"--accent",background:"--bg",alternate:"--alt",ink:"--ink"};
+  Object.keys(styleVars).forEach(function(key){
+    var value=themeStyle[key];
+    if(typeof value==="string" && /^#[0-9a-f]{3,8}$/i.test(value)) document.body.style.setProperty(styleVars[key],value);
+  });
+  [["headingFont","--head"],["bodyFont","--body"]].forEach(function(pair){
+    var value=themeStyle[pair[0]];
+    if(typeof value==="string" && /^(Cormorant Garamond|Montserrat|Lora|Poppins|Fredoka|Nunito|Plus Jakarta Sans|Georgia|Arial|serif|sans-serif)$/i.test(value))
+      document.body.style.setProperty(pair[1],"'"+value+"',"+(pair[0]==="headingFont"?"serif":"sans-serif"));
+  });
+  if(themeStyle.ornament==="none") document.body.classList.add("no-ornament");
+  else if(["floral","classic","minimal"].indexOf(themeStyle.ornament)>=0) document.body.setAttribute("data-ornament",themeStyle.ornament);
+
   var people = D.people.map(function (p, i) {
+    var portrait=safeUrl(p.photo);
+    var avatar=portrait?'<div class="avatar portrait"><img loading="lazy" alt="Foto '+esc(p.name||"mempelai")+'" src="'+esc(portrait)+'"></div>':'<div class="avatar">'+esc(p.icon||"✦")+'</div>';
     return (i > 0 && D.kind === "nikah" ? '<div class="amp">&amp;</div>' : "") +
-      '<div class="person reveal"><div class="avatar">' + esc(p.icon || "✦") + '</div><h3>' + esc(p.name) + '</h3><p class="muted">' + esc(p.sub) + '</p></div>';
+      '<div class="person reveal">' + avatar + '<h3>' + esc(p.name) + '</h3><p class="muted">' + esc(p.sub) + '</p></div>';
   }).join("");
+
+  var storyItems=(D.loveStory||[]).filter(function(x){return x&&(String(x.title||"").trim()||String(x.text||"").trim())});
+  var loveStory=storyItems.length?'<section class="s love-story"><span class="kicker">'+esc(D.loveStoryTitle||"Kisah Kami")+'</span><h2 class="title">'+esc(D.loveStoryHeading||"Love Story")+'</h2><div class="story-list">'+storyItems.map(function(x,i){var photo=safeUrl(x.photo);return '<article class="story-item reveal"><span class="story-mark">'+(i+1)+'</span>'+(photo?'<img loading="lazy" alt="" src="'+esc(photo)+'">':'')+'<div><h3>'+esc(x.title||"")+'</h3><p>'+esc(x.text||"")+'</p>'+(x.date?'<small>'+esc(x.date)+'</small>':'')+'</div></article>'}).join("")+'</div></section>':"";
 
   var events = D.events.map(function (e) {
     var d = dateStr;
@@ -54,10 +73,11 @@
   }).join("");
 
   var photos = (D.gallery || []).map(safeUrl).filter(Boolean);
+  var galleryAnimation=["fade","zoom","slide"].indexOf(D.galleryAnimation)>=0?D.galleryAnimation:"fade";
   var gallery = "";
   if (photos.length) {
     photos.forEach(function (src, i) {
-      gallery += '<div class="ph"><img loading="lazy" alt="Foto ' + (i + 1) + '" src="' + esc(src) + '"></div>';
+      gallery += '<div class="ph reveal gallery-' + galleryAnimation + '" style="transition-delay:' + Math.min(i*90,450) + 'ms"><img loading="lazy" alt="Foto ' + (i + 1) + '" src="' + esc(src) + '"></div>';
     });
   } else if (!LIVE) {
     for (var i = 1; i <= 6; i++) gallery += '<div><span>' + esc(D.galleryIcon || "✦") + '<small>FOTO ' + i + '</small></span></div>';
@@ -93,6 +113,8 @@
       '<div class="cd" id="cd"><div><b id="d">0</b><span>Hari</span></div><div><b id="h">0</b><span>Jam</span></div><div><b id="m">0</b><span>Menit</span></div><div><b id="s">0</b><span>Detik</span></div></div></section>' +
 
     '<section class="s"><span class="kicker">Rangkaian Acara</span><h2 class="title">Waktu &amp; Tempat</h2>' + events + '</section>' +
+
+    loveStory +
 
     gallerySection +
 

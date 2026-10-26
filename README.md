@@ -56,12 +56,14 @@ Situs ini bersifat statis; tidak ada backend untuk menyimpan RSVP atau ucapan se
 - Jika nomor WhatsApp tuan rumah belum diatur, pengunjung akan diberi tahu bahwa RSVP belum terkirim.
 - Pada halaman demo, ucapan hanya ditampilkan sementara di browser dan tidak disimpan ke server.
 
-## Menambah tema
+## Membuat tema baru (pengelola)
 
-1. Salin salah satu file `demo/tema-*.html` dan ubah nama serta konfigurasi `window.DEMO`.
-2. Tambahkan gaya tema di `demo/demo.css`.
-3. Tambahkan tema di daftar `THEMES` pada `assets/config.js`.
-4. Tambahkan gaya kartu tema yang sesuai di `assets/style.css`.
+1. Buka `dashboard-tema.html`, halaman pembuat tema khusus pengelola.
+2. Atur warna, font, ornamen, bentuk kartu, dan animasi galeri; pratinjau ponsel berubah langsung.
+3. Unduh preset JSON lalu impor di bagian Tema pada `admin.html` untuk menerapkan pengaturan visual ke pesanan.
+4. Untuk menerbitkan tema permanen ke katalog, unduh CSS dan tambahkan ke `demo/demo.css`, buat halaman demo dari `demo/tema-*.html`, lalu perbarui `assets/config.js` dan `assets/style.css`.
+
+Dashboard berjalan statis: draft tersimpan hanya di browser perangkat tersebut. Ekspor menghasilkan file preset/CSS; tidak otomatis menulis ke GitHub atau menerbitkan tema untuk semua pengunjung. Halaman statis yang tidak ditautkan tetap bisa dibuka siapa pun yang mengetahui URL, jadi ini bukan sistem autentikasi privat.
 
 ## Nama tamu pada demo
 
