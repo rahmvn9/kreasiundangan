@@ -50,13 +50,18 @@
     if(typeof value==="string" && /^(Cormorant Garamond|Montserrat|Lora|Poppins|Fredoka|Nunito|Plus Jakarta Sans|Georgia|Arial|serif|sans-serif)$/i.test(value))
       document.body.style.setProperty(pair[1],"'"+value+"',"+(pair[0]==="headingFont"?"serif":"sans-serif"));
   });
-  if(themeStyle.ornament==="none") document.body.classList.add("no-ornament");
-  else if(["floral","classic","minimal"].indexOf(themeStyle.ornament)>=0) document.body.setAttribute("data-ornament",themeStyle.ornament);
+  document.body.classList.remove("ornament-classic","ornament-minimal");
+  if(themeStyle.ornament==="none") {
+    document.body.classList.add("no-ornament");
+  } else {
+    document.body.classList.remove("no-ornament");
+    if(themeStyle.ornament==="classic") document.body.classList.add("ornament-classic");
+    if(themeStyle.ornament==="minimal") document.body.classList.add("ornament-minimal");
+  }
   // Apply dashboard preset values to the actual invitation, not just its colors and fonts.
   if(typeof themeStyle.radius==="string" && /^(2|8|20|28)px$/.test(themeStyle.radius)) {
     document.body.style.setProperty("--card-radius",themeStyle.radius);
     document.body.style.setProperty("--field-radius",themeStyle.radius);
-    document.body.style.setProperty("--btn-radius",themeStyle.radius);
   }
   if(["soft","solid","gradient"].indexOf(themeStyle.coverStyle)>=0) {
     var coverBg=themeStyle.coverStyle==="solid" ? themeStyle.background :
