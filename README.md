@@ -4,10 +4,14 @@ Situs statis (HTML/CSS/JS), siap dipasang di GitHub Pages, Cloudflare Pages, ata
 
 ## Ganti dulu sebelum tayang
 Buka `assets/config.js`, lalu ubah:
-- `brand`  : nama usaha kamu
+- `brand`  : nama usaha (sekarang: Kreasi Undangan)
 - `wa`     : nomor WhatsApp, awali 62, tanpa 0 atau tanda +
 
 Harga paket ada di `index.html` (bagian `id="harga"`), masih contoh.
+
+## Foto
+Foto ada di `assets/foto/` (format webp, sudah dikompres). Ganti file dengan foto milikmu atau foto berlisensi,
+pakai nama yang sama, atau ubah alamatnya di `window.DEMO` pada tiap `demo/tema-*.html` dan di `assets/config.js`.
 
 ## Struktur
 ```

@@ -26,16 +26,26 @@
   }).join("");
 
   var gallery = "";
-  for (var i = 1; i <= 6; i++) gallery += '<div><span>' + D.galleryIcon + '<small>FOTO ' + i + '</small></span></div>';
+  if (D.gallery && D.gallery.length) {
+    D.gallery.forEach(function (src, i) {
+      gallery += '<div class="ph"><img loading="lazy" alt="Foto ' + (i + 1) + '" src="' + src + '"></div>';
+    });
+  } else {
+    for (var i = 1; i <= 6; i++) gallery += '<div><span>' + D.galleryIcon + '<small>FOTO ' + i + '</small></span></div>';
+  }
+  var couplePhoto = D.coupleImg ? '<div class="couple-photo reveal"><img alt="Foto mempelai" src="' + D.coupleImg + '"></div>' : "";
+  function bgPhoto(src, pos) {
+    return src ? ' style="background-image:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.15) 40%,rgba(0,0,0,.65)),url(' + src + ');background-size:cover;background-position:' + (pos || "center top") + '"' : "";
+  }
 
   app.innerHTML =
-    '<section class="s hero"><span class="kicker" style="color:inherit">' + esc(D.heading) + '</span>' +
+    '<section class="s hero' + (D.heroImg ? ' photo' : '') + '"' + bgPhoto(D.heroImg, D.heroPos) + '><span class="kicker" style="color:inherit">' + esc(D.heading) + '</span>' +
       '<h1>' + esc(names) + '</h1><p class="date">' + esc(dateStr) + '</p></section>' +
 
     '<section class="s quote"><span class="kicker">' + esc(D.quoteTitle) + '</span>' +
       '<p class="reveal">' + esc(D.quote) + '</p></section>' +
 
-    '<section class="s"><span class="kicker">' + esc(D.peopleTitle) + '</span>' + people + '</section>' +
+    '<section class="s"><span class="kicker">' + esc(D.peopleTitle) + '</span>' + couplePhoto + people + '</section>' +
 
     '<section class="s count"><span class="kicker">Menuju Hari Bahagia</span>' +
       '<h2 class="title">Hitung Mundur</h2>' +
@@ -62,7 +72,14 @@
   // sampul
   var cover = document.createElement("div");
   cover.id = "cover";
-  cover.innerHTML = '<div><div class="heading">' + esc(D.heading) + '</div><h1>' + esc(names) + '</h1>' +
+  if (D.coverImg) {
+    cover.classList.add("photo");
+    cover.style.backgroundImage = "linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,.2) 40%,rgba(0,0,0,.75)),url(" + D.coverImg + ")";
+    cover.style.backgroundSize = "cover";
+    cover.style.backgroundPosition = D.coverPos || "center top";
+  }
+  var frame = D.coverFrame ? '<div class="frame"><img alt="" src="' + D.coverFrame + '"></div>' : "";
+  cover.innerHTML = '<div>' + frame + '<div class="heading">' + esc(D.heading) + '</div><h1>' + esc(names) + '</h1>' +
     '<p class="date">' + esc(dateStr) + '</p><p class="to">Kepada Yth. Bapak/Ibu/Saudara/i</p>' +
     '<p class="guest">' + esc(guest) + '</p><button class="btn" id="openBtn">Buka Undangan</button></div>';
   document.body.appendChild(cover);

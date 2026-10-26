@@ -25,7 +25,7 @@
         var el = document.createElement("article");
         el.className = "card";
         el.innerHTML =
-          '<div class="thumb th-' + t.slug + '">' +
+          '<div class="thumb th-' + t.slug + (t.img ? ' has-img' : '') + '"' + (t.img ? ' style="background-image:linear-gradient(180deg,rgba(0,0,0,.05) 30%,rgba(0,0,0,.65)),url(\'' + t.img + '\')"' : '') + '>' +
             '<span class="tag">' + t.category + '</span>' +
             '<small>UNDANGAN</small><b>' + t.name + '</b><small>CONTOH TEMA</small>' +
             '<i>Buka Undangan</i>' +

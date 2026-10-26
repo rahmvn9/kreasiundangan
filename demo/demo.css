@@ -133,3 +133,31 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-
 .t-ceria .hero::before{content:'🎉';font-size:2.6rem;display:block}
 .t-ceria .event{border:3px dashed var(--accent)}
 .t-ceria .cd div{border:2px solid var(--accent)}
+
+/* =========================================================
+   FOTO (sampul, hero, bingkai, galeri)
+   ========================================================= */
+#cover.photo,.hero.photo{color:#fff}
+#cover.photo .btn{background:#fff;color:#222}
+#cover.photo{align-content:end;padding-bottom:64px}
+.hero.photo{min-height:92vh;align-content:end;padding-bottom:70px}
+#cover .frame{width:190px;height:270px;margin:0 auto 1.4rem;border-radius:100px 100px 12px 12px;overflow:hidden;border:3px solid var(--cover-btn);box-shadow:0 12px 30px rgba(0,0,0,.3)}
+#cover .frame img,.couple-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.couple-photo{width:min(260px,80%);aspect-ratio:4/5;margin:0 auto 2rem;border-radius:140px 140px 20px 20px;overflow:hidden;border:3px solid var(--accent);box-shadow:0 14px 34px rgba(0,0,0,.18)}
+.g .ph{padding:0;overflow:hidden;display:block}
+.g .ph img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* =========================================================
+   TEMA 4 — MAROON BATIK
+   ========================================================= */
+.t-maroon{
+  --bg:#fff8f2;--alt:#f8e9e4;--card:#ffffff;--ink:#4a1620;--line:#ecd0c8;
+  --accent:#9b2335;--on-accent:#fff;--head:'Cormorant Garamond',serif;--body:'Montserrat',sans-serif;
+  --btn-radius:99px;--card-radius:18px;--field-radius:12px;--avatar-radius:50%;--avatar-bg:#f3d5cf;
+  --cover-bg:radial-gradient(circle at 50% 20%,#8e1f33,#3d0b17 80%);--cover-ink:#f6d9b4;--cover-btn:#e3b873;--cover-btn-ink:#4a1620;
+  --hero-bg:linear-gradient(170deg,#6d1426,#3d0b17);--g1:#9b2335;--g2:#c98a5a;
+}
+.t-maroon .title{font-weight:500}
+.t-maroon .event{border-top:4px solid var(--accent)}
+.t-maroon #cover::before{content:'';position:absolute;inset:16px;border:1px solid #e3b87388;pointer-events:none;border-radius:6px}
+#cover.photo::before{display:none!important}
