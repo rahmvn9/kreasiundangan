@@ -52,6 +52,26 @@
   });
   if(themeStyle.ornament==="none") document.body.classList.add("no-ornament");
   else if(["floral","classic","minimal"].indexOf(themeStyle.ornament)>=0) document.body.setAttribute("data-ornament",themeStyle.ornament);
+  // Apply dashboard preset values to the actual invitation, not just its colors and fonts.
+  if(typeof themeStyle.radius==="string" && /^(2|8|20|28)px$/.test(themeStyle.radius)) {
+    document.body.style.setProperty("--card-radius",themeStyle.radius);
+    document.body.style.setProperty("--field-radius",themeStyle.radius);
+    document.body.style.setProperty("--btn-radius",themeStyle.radius);
+  }
+  if(["soft","solid","gradient"].indexOf(themeStyle.coverStyle)>=0) {
+    var coverBg=themeStyle.coverStyle==="solid" ? themeStyle.background :
+      themeStyle.coverStyle==="gradient" ? "linear-gradient(145deg,"+themeStyle.background+","+themeStyle.accent+")" :
+      "linear-gradient(160deg,"+themeStyle.background+","+themeStyle.alternate+")";
+    if(/^#[0-9a-f]{3,8}$/i.test(themeStyle.background||"") &&
+       /^#[0-9a-f]{3,8}$/i.test(themeStyle.alternate||"") &&
+       /^#[0-9a-f]{3,8}$/i.test(themeStyle.accent||"")) {
+      document.body.style.setProperty("--cover-bg",coverBg);
+      document.body.style.setProperty("--hero-bg",coverBg);
+      document.body.style.setProperty("--cover-ink",themeStyle.ink);
+      document.body.style.setProperty("--cover-btn",themeStyle.accent);
+      document.body.style.setProperty("--cover-btn-ink","#fff");
+    }
+  }
 
   var people = D.people.map(function (p, i) {
     var portrait=safeUrl(p.photo);
