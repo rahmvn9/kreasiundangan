@@ -34,7 +34,7 @@ var presets={
 function read(){var o={};keys.forEach(function(k){o[k]=$(k).value});return o}
 function status(s){$("status").textContent=s}
 function valid(o){if(!o.themeName.trim()){alert("Nama tema harus diisi.");return false}if(!/^[a-z0-9-]{1,40}$/.test(o.slug)){alert("Slug hanya boleh huruf kecil, angka, dan strip.");return false}return true}
-function vars(o){return{accent:o.accent,background:o.background,alternate:o.alternate,ink:o.ink,headingFont:o.headingFont,bodyFont:o.bodyFont,ornament:o.ornament}}
+function vars(o){return{accent:o.accent,background:o.background,alternate:o.alternate,ink:o.ink,headingFont:o.headingFont,bodyFont:o.bodyFont,ornament:o.ornament,radius:o.radius,coverStyle:o.coverStyle}}
 function coverValue(o){if(o.coverStyle==="solid")return o.background;if(o.coverStyle==="gradient")return "linear-gradient(145deg,"+o.background+","+o.accent+")";return "linear-gradient(160deg,"+o.background+","+o.alternate+")"}
 function apply(o){
  var p=$("phone"), cover=coverValue(o);
