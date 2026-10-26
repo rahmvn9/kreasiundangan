@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Link Nama Tamu</title>
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f1e9;--card:#fff;--ink:#26211e;--muted:#6f6760;--green:#1f3d36;--gold:#c4993f;--line:#e4dccd}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+.wrap{width:min(760px,100% - 28px);margin:0 auto;padding:24px 0 70px}
+h1{font-size:1.45rem;color:var(--green)} .sub{color:var(--muted);font-size:.92rem;margin:.3rem 0 1.2rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
+label{display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:5px}
+textarea,input{width:100%;padding:.65rem .8rem;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:.92rem;color:var(--ink);background:#fff}
+textarea{min-height:150px;resize:vertical}
+textarea:focus,input:focus{outline:2px solid var(--gold);outline-offset:1px}
+.hint{font-size:.76rem;color:var(--muted);margin-top:4px}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.05rem;border-radius:99px;border:0;background:var(--green);color:#fff;font:inherit;font-weight:700;font-size:.85rem;cursor:pointer;text-decoration:none}
+.btn.alt{background:#fff;color:var(--green);border:1.5px solid var(--green)}
+.btn.wa{background:#1fa855}
+.btn.sm{padding:.45rem .85rem;font-size:.78rem}
+.top{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.item{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.item b{font-size:.95rem}
+.item small{display:block;color:var(--muted);word-break:break-all;font-size:.72rem;margin-top:2px}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+@media(max-width:560px){.item{grid-template-columns:1fr}}
+details{margin-top:12px} summary{cursor:pointer;font-weight:700;font-size:.85rem;color:var(--green)}
+#info{font-weight:700;color:var(--green)}
+.empty{color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Buat Link Nama Tamu</h1>
+  <p class="sub" id="sub">Tulis nama tamu, lalu kamu mendapat satu link undangan untuk tiap orang. Nama tamu akan tampil di sampul undangan.</p>
+
+  <div class="card">
+    <p id="info"></p>
+    <label for="names" style="margin-top:10px">Daftar nama tamu (satu nama per baris)</label>
+    <textarea id="names" placeholder="Bapak Ahmad&#10;Ibu Siti, 081234567890&#10;Keluarga Besar Pak Budi"></textarea>
+    <p class="hint">Mau kirim langsung ke nomor tamu? Tambahkan koma dan nomornya, contoh: <b>Ibu Siti, 081234567890</b>. Tanpa nomor, WhatsApp akan meminta kamu memilih kontak.</p>
+    <details>
+      <summary>Ubah kalimat pesan WhatsApp</summary>
+      <textarea id="tpl" style="margin-top:8px;min-height:170px"></textarea>
+      <p class="hint">Jangan hapus <b>{nama}</b> dan <b>{link}</b>, keduanya diisi otomatis.</p>
+    </details>
+    <div class="top"><button class="btn" id="go" type="button">Buat Link</button><button class="btn alt" id="copyall" type="button">Salin Semua</button></div>
+  </div>
+
+  <div class="card" id="result"><p class="empty">Link akan muncul di sini.</p></div>
+</div>
+
+<script src="assets/config.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var p = new URLSearchParams(location.search);
+  var param = null, acara = "acara kami";
+
+  function dec(s) {
+    s = s.replace(/-/g, "+").replace(/_/g, "/");
+    while (s.length % 4) s += "=";
+    var bin = atob(s), arr = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return JSON.parse(new TextDecoder().decode(arr));
+  }
+  function setInfo(d) {
+    var n = (d.names || []).filter(Boolean).join(" & ");
+    if (n) { acara = "acara " + n; $("info").textContent = "Undangan: " + n; }
+  }
+  try {
+    if (p.get("d")) { param = "d=" + encodeURIComponent(p.get("d")); setInfo(dec(p.get("d"))); }
+    else if (p.get("o") && /^[a-z0-9-]{1,60}$/i.test(p.get("o"))) {
+      param = "o=" + encodeURIComponent(p.get("o"));
+      $("info").textContent = "Undangan: " + p.get("o");
+      fetch("pesanan/" + p.get("o") + ".json").then(function (r) { return r.json(); }).then(setInfo).catch(function () {});
+    }
+  } catch (e) { param = null; }
+  if (!param) { $("info").textContent = "Link ini belum berisi data undangan. Minta link yang benar dari " + window.SITE.brand + "."; $("go").disabled = true; }
+
+  $("tpl").value = "Assalamualaikum Wr. Wb.\n\nKepada Yth. {nama}\n\nTanpa mengurangi rasa hormat, kami mengundang Bapak/Ibu/Saudara/i untuk hadir pada {acara}.\n\nUndangan digital dapat dibuka di sini:\n{link}\n\nMerupakan kehormatan bagi kami apabila berkenan hadir. Terima kasih.";
+
+  var links = [];
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function copy(text, btn) {
+    var done = function () { var o = btn.textContent; btn.textContent = "Tersalin ✓"; setTimeout(function () { btn.textContent = o; }, 1400); };
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () { prompt("Salin manual:", text); });
+    else prompt("Salin manual:", text);
+  }
+  function normNum(n) { n = n.replace(/\D/g, ""); if (n.indexOf("0") === 0) n = "62" + n.slice(1); return n; }
+
+  function build() {
+    if (!param) return;
+    var base = new URL("undangan.html", location.href).href;
+    links = $("names").value.split("\n").map(function (l) { return l.trim(); }).filter(Boolean).map(function (l) {
+      var m = l.match(/^(.*?)\s*[,;|\t]\s*(\+?[\d][\d\s\-]{7,})$/), name = l, num = "";
+      if (m) { name = m[1].trim(); num = normNum(m[2]); }
+      name = name.slice(0, 60);
+      var link = base + "?" + param + "&to=" + encodeURIComponent(name);
+      var msg = $("tpl").value.replace(/\{nama\}/g, name).replace(/\{acara\}/g, acara).replace(/\{link\}/g, link);
+      return { name: name, num: num, link: link, wa: "https://wa.me/" + num + "?text=" + encodeURIComponent(msg) };
+    });
+    var box = $("result");
+    if (!links.length) { box.innerHTML = '<p class="empty">Isi nama tamu dulu.</p>'; return; }
+    box.innerHTML = '<p style="font-weight:800;margin-bottom:4px">' + links.length + ' link siap</p>';
+    links.forEach(function (it, i) {
+      var row = document.createElement("div"); row.className = "item";
+      row.innerHTML = '<div><b>' + esc(it.name) + '</b>' + (it.num ? ' <span class="hint">(' + esc(it.num) + ')</span>' : '') + '<small>' + esc(it.link.length > 110 ? it.link.slice(0, base.length + 14) + "…&to=" + encodeURIComponent(it.name) : it.link) + '</small></div>' +
+        '<div class="acts"><button class="btn alt sm" data-i="' + i + '" data-k="c">Salin link</button>' +
+        '<a class="btn wa sm" target="_blank" rel="noopener" href="' + esc(it.wa) + '">Kirim WhatsApp</a></div>';
+      box.appendChild(row);
+    });
+    box.querySelectorAll('[data-k="c"]').forEach(function (b) { b.onclick = function () { copy(links[b.getAttribute("data-i")].link, b); }; });
+  }
+  $("go").onclick = build;
+  $("copyall").onclick = function () {
+    if (!links.length) build();
+    if (!links.length) return;
+    copy(links.map(function (x) { return x.name + "\n" + x.link; }).join("\n\n"), $("copyall"));
+  };
+})();
+</script>
+</body>
+</html>

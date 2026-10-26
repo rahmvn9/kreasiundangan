@@ -1,0 +1,30 @@
+{
+  "theme": "t-maroon",
+  "kind": "nikah",
+  "jenis": "nikah",
+  "heading": "The Wedding of",
+  "names": ["Fajar", "Salsa"],
+  "date": "2026-12-20T10:00",
+  "quoteTitle": "Bismillah",
+  "quote": "Dengan memohon rahmat dan ridho Allah, kami bermaksud mengundang Anda untuk menjadi saksi hari bahagia kami.",
+  "peopleTitle": "Kedua Mempelai",
+  "people": [
+    { "icon": "🤵", "name": "Fajar Ramadhan", "sub": "Putra Bapak Hasan & Ibu Wati" },
+    { "icon": "👰", "name": "Salsa Maharani", "sub": "Putri Bapak Rudi & Ibu Dewi" }
+  ],
+  "events": [
+    { "title": "Akad Nikah", "time": "Pukul 10.00 WIB – selesai", "place": "Masjid Al-Ikhlas", "address": "Jl. Merdeka No. 10, Kuala Tungkal" },
+    { "title": "Resepsi", "time": "Pukul 13.00 – 16.00 WIB", "place": "Gedung Serbaguna Sakinah", "address": "Jl. Pelabuhan No. 25, Kuala Tungkal", "date": "2026-12-21" }
+  ],
+  "coverImg": "assets/foto/maroon-5.webp",
+  "coverPos": "center 20%",
+  "heroImg": "assets/foto/maroon-9.webp",
+  "heroPos": "center 20%",
+  "coupleImg": "assets/foto/maroon-3.webp",
+  "gallery": ["assets/foto/maroon-1.webp", "assets/foto/maroon-4.webp", "assets/foto/maroon-6.webp", "assets/foto/maroon-8.webp"],
+  "music": "",
+  "rsvpWa": "085265907198",
+  "closingTitle": "Fajar & Salsa",
+  "closing": "Kehadiran dan doa restu Anda adalah kebahagiaan terbesar bagi kami.",
+  "kode": "contoh"
+}

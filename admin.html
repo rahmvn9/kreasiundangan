@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Pesanan</title>
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f1e9;--card:#fff;--ink:#26211e;--muted:#6f6760;--green:#1f3d36;--gold:#c4993f;--line:#e4dccd}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+.wrap{width:min(900px,100% - 28px);margin:0 auto;padding:22px 0 80px}
+h1{font-size:1.5rem;color:var(--green)} .sub{color:var(--muted);font-size:.9rem;margin:.2rem 0 1.2rem}
+fieldset{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 18px 8px;margin-bottom:16px}
+legend{font-weight:800;font-size:.95rem;padding:0 8px;color:var(--green)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.row.one{grid-template-columns:1fr}
+@media(max-width:620px){.row{grid-template-columns:1fr}}
+label{display:block;font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:4px}
+input,select,textarea{width:100%;padding:.62rem .75rem;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:.92rem;background:#fff;color:var(--ink)}
+textarea{min-height:76px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
+.hint{font-size:.74rem;color:var(--muted);margin-top:3px}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.1rem;border-radius:99px;border:0;background:var(--green);color:#fff;font:inherit;font-weight:700;font-size:.88rem;cursor:pointer;text-decoration:none}
+.btn.alt{background:#fff;color:var(--green);border:1.5px solid var(--green)}
+.btn.wa{background:#1fa855}
+.bar{position:sticky;bottom:0;background:rgba(246,241,233,.95);backdrop-filter:blur(8px);padding:12px 0;display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:8px}
+.out{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:6px;display:none}
+.out.show{display:block}
+.out code{display:block;background:#f4efe6;border-radius:8px;padding:.5rem .7rem;font-size:.78rem;word-break:break-all;margin:.25rem 0 .6rem}
+.out h3{font-size:.92rem;margin:.6rem 0 .1rem}
+.ok{color:#178f47;font-weight:700;font-size:.82rem}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Admin Pesanan <span data-brand></span></h1>
+  <p class="sub">Isi data pesanan pelanggan, lalu salin link undangannya. Halaman ini tidak dicantumkan di menu situs, simpan alamatnya untuk dirimu sendiri.</p>
+
+  <form id="f" autocomplete="off">
+    <fieldset><legend>Pesanan</legend>
+      <div class="row">
+        <div><label>Kode pesanan (huruf kecil, angka, strip)</label><input id="kode" placeholder="contoh: fajar-salsa" maxlength="40"><div class="hint">Dipakai untuk nama file dan link pendek.</div></div>
+        <div><label>Tema</label><select id="tema">
+          <option value="t-elegan">Elegan Emas</option><option value="t-rustic">Rustic Floral</option>
+          <option value="t-maroon" selected>Maroon Batik</option><option value="t-ceria">Ceria Anak</option></select></div>
+      </div>
+      <div class="row">
+        <div><label>Jenis acara</label><select id="jenis"><option value="nikah">Pernikahan</option><option value="ultah">Ulang tahun</option><option value="khitan">Khitanan</option><option value="lain">Lainnya</option></select></div>
+        <div><label>Judul kecil di sampul</label><input id="heading" value="The Wedding of"></div>
+      </div>
+    </fieldset>
+
+    <fieldset><legend>Nama</legend>
+      <div class="row">
+        <div><label>Nama panggilan 1</label><input id="nama1" value="Fajar"></div>
+        <div id="box-nama2"><label>Nama panggilan 2</label><input id="nama2" value="Salsa"></div>
+      </div>
+      <div class="row">
+        <div><label>Nama lengkap 1</label><input id="lengkap1" value="Fajar Ramadhan"></div>
+        <div id="box-lengkap2"><label>Nama lengkap 2</label><input id="lengkap2" value="Salsa Maharani"></div>
+      </div>
+      <div class="row">
+        <div><label>Keterangan 1 (orang tua)</label><input id="ortu1" value="Putra Bapak Hasan &amp; Ibu Wati"></div>
+        <div id="box-ortu2"><label>Keterangan 2 (orang tua)</label><input id="ortu2" value="Putri Bapak Rudi &amp; Ibu Dewi"></div>
+      </div>
+    </fieldset>
+
+    <fieldset><legend>Waktu &amp; tempat</legend>
+      <div class="row">
+        <div><label>Tanggal &amp; jam utama (untuk hitung mundur)</label><input type="datetime-local" id="tanggal"></div>
+        <div><label>WhatsApp tuan rumah (menerima RSVP)</label><input id="rsvp" placeholder="08xxxxxxxxxx"></div>
+      </div>
+      <div id="events"></div>
+    </fieldset>
+
+    <fieldset><legend>Kata-kata</legend>
+      <div class="row">
+        <div><label>Judul kata pembuka</label><input id="qjudul" value="Bismillah"></div>
+        <div><label>Judul bagian nama</label><input id="pjudul" value="Kedua Mempelai"></div>
+      </div>
+      <div class="row one"><div><label>Kata pembuka</label><textarea id="quote">Dengan memohon rahmat dan ridho Allah, kami bermaksud mengundang Anda untuk menjadi saksi hari bahagia kami.</textarea></div></div>
+      <div class="row">
+        <div><label>Judul penutup</label><input id="cjudul" value="Fajar &amp; Salsa"></div>
+        <div><label>Kalimat penutup</label><input id="closing" value="Kehadiran dan doa restu Anda adalah kebahagiaan terbesar bagi kami."></div>
+      </div>
+    </fieldset>
+
+    <fieldset><legend>Foto &amp; musik</legend>
+      <p class="hint" style="margin-bottom:10px">Isi dengan alamat foto: file di situs ini (contoh <b>assets/pesanan/fajar-salsa/1.webp</b>) atau alamat https. Kosongkan jika tidak ada.</p>
+      <div class="row">
+        <div><label>Foto sampul</label><input id="fcover" value="assets/foto/maroon-5.webp"></div>
+        <div><label>Foto bagian atas (hero)</label><input id="fhero" value="assets/foto/maroon-9.webp"></div>
+      </div>
+      <div class="row">
+        <div><label>Foto pasangan / pemilik acara</label><input id="fcouple" value="assets/foto/maroon-3.webp"></div>
+        <div><label>Musik (opsional, alamat file mp3)</label><input id="musik" placeholder="assets/musik.mp3"></div>
+      </div>
+      <div class="row one"><div><label>Galeri (satu alamat per baris)</label><textarea id="galeri" rows="4">assets/foto/maroon-1.webp
+assets/foto/maroon-4.webp
+assets/foto/maroon-6.webp
+assets/foto/maroon-8.webp</textarea></div></div>
+    </fieldset>
+  </form>
+
+  <div class="out" id="out"></div>
+
+  <div class="bar">
+    <button class="btn" id="b-link" type="button">Buat link</button>
+    <button class="btn alt" id="b-prev" type="button">Pratinjau</button>
+    <button class="btn alt" id="b-json" type="button">Unduh file pesanan (.json)</button>
+    <button class="btn alt" id="b-save" type="button">Simpan draft</button>
+    <label class="btn alt" style="margin:0">Buka file .json<input type="file" id="b-load" accept=".json,application/json" class="hide"></label>
+  </div>
+</div>
+
+<script src="assets/config.js"></script>
+<script>
+(function () {
+  document.querySelectorAll("[data-brand]").forEach(function (e) { e.textContent = window.SITE.brand; });
+  var $ = function (id) { return document.getElementById(id); };
+  var DEF = { nikah: "The Wedding of", ultah: "Ulang Tahun", khitan: "Syukuran Khitan", lain: "Undangan" };
+
+  // dua kolom acara
+  var evHtml = "";
+  [1, 2].forEach(function (n) {
+    evHtml += '<div style="border-top:1px dashed var(--line);padding-top:12px;margin-top:4px"><p style="font-weight:800;font-size:.85rem;margin-bottom:8px">Acara ' + n + (n === 2 ? " (opsional)" : "") + '</p>' +
+      '<div class="row"><div><label>Judul acara</label><input id="e' + n + 't" value="' + (n === 1 ? "Acara Lamaran" : "Resepsi Pernikahan") + '"></div>' +
+      '<div><label>Tanggal (kosongkan jika sama dengan tanggal utama)</label><input type="date" id="e' + n + 'd"></div></div>' +
+      '<div class="row"><div><label>Jam</label><input id="e' + n + 'j" value="' + (n === 1 ? "Pukul 10.00 WIB – selesai" : "Pukul 13.00 – 16.00 WIB") + '"></div>' +
+      '<div><label>Nama tempat</label><input id="e' + n + 'p" value="' + (n === 1 ? "Kediaman Mempelai Wanita" : "Gedung Serbaguna Sakinah") + '"></div></div>' +
+      '<div class="row one"><div><label>Alamat</label><input id="e' + n + 'a" value="' + (n === 1 ? "Jl. Melati No. 12, Kuala Tungkal" : "Jl. Pelabuhan No. 25, Kuala Tungkal") + '"></div></div></div>';
+  });
+  $("events").innerHTML = evHtml;
+
+  // tanggal bawaan: 30 hari lagi, jam 10.00
+  (function () {
+    var d = new Date(); d.setDate(d.getDate() + 30); d.setHours(10, 0, 0, 0);
+    var p = function (n) { return n < 10 ? "0" + n : n; };
+    $("tanggal").value = d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + "T" + p(d.getHours()) + ":" + p(d.getMinutes());
+  })();
+
+  function syncJenis() {
+    var nikah = $("jenis").value === "nikah";
+    ["box-nama2", "box-lengkap2", "box-ortu2"].forEach(function (i) { $(i).classList.toggle("hide", !nikah); });
+    var cur = $("heading").value;
+    if (Object.keys(DEF).some(function (k) { return DEF[k] === cur; })) $("heading").value = DEF[$("jenis").value];
+    $("pjudul").value = nikah ? "Kedua Mempelai" : "Yang Berbahagia";
+  }
+  $("jenis").addEventListener("change", syncJenis);
+
+  function collect() {
+    var nikah = $("jenis").value === "nikah";
+    var lines = function (s) { return s.split("\n").map(function (x) { return x.trim(); }).filter(Boolean); };
+    var d = {
+      theme: $("tema").value,
+      kind: nikah ? "nikah" : "lain", jenis: $("jenis").value,
+      heading: $("heading").value.trim(),
+      names: nikah ? [$("nama1").value.trim(), $("nama2").value.trim()] : [$("nama1").value.trim()],
+      date: $("tanggal").value,
+      quoteTitle: $("qjudul").value.trim(), quote: $("quote").value.trim(),
+      peopleTitle: $("pjudul").value.trim(),
+      people: nikah
+        ? [{ icon: "🤵", name: $("lengkap1").value.trim(), sub: $("ortu1").value.trim() },
+           { icon: "👰", name: $("lengkap2").value.trim(), sub: $("ortu2").value.trim() }]
+        : [{ icon: "🎉", name: $("lengkap1").value.trim(), sub: $("ortu1").value.trim() }],
+      events: [],
+      coverImg: $("fcover").value.trim(), coverPos: "center 20%",
+      heroImg: $("fhero").value.trim(), heroPos: "center 20%",
+      coupleImg: $("fcouple").value.trim(),
+      gallery: lines($("galeri").value),
+      music: $("musik").value.trim(),
+      rsvpWa: $("rsvp").value.trim(),
+      closingTitle: $("cjudul").value.trim(), closing: $("closing").value.trim(),
+      kode: $("kode").value.trim()
+    };
+    [1, 2].forEach(function (n) {
+      var t = $("e" + n + "t").value.trim(), p = $("e" + n + "p").value.trim();
+      if (!t && !p) return;
+      var e = { title: t, time: $("e" + n + "j").value.trim(), place: p, address: $("e" + n + "a").value.trim() };
+      if ($("e" + n + "d").value) e.date = $("e" + n + "d").value;
+      d.events.push(e);
+    });
+    return d;
+  }
+  function fill(d) {
+    var set = function (id, v) { if ($(id) && v != null) $(id).value = v; };
+    set("tema", d.theme); set("jenis", d.jenis || (d.kind === "nikah" ? "nikah" : "lain"));
+    set("heading", d.heading); set("kode", d.kode);
+    var n = d.names || [], p = d.people || [];
+    set("nama1", n[0]); set("nama2", n[1]);
+    set("lengkap1", p[0] && p[0].name); set("ortu1", p[0] && p[0].sub);
+    set("lengkap2", p[1] && p[1].name); set("ortu2", p[1] && p[1].sub);
+    set("tanggal", d.date); set("rsvp", d.rsvpWa);
+    set("qjudul", d.quoteTitle); set("quote", d.quote); set("pjudul", d.peopleTitle);
+    set("cjudul", d.closingTitle); set("closing", d.closing);
+    set("fcover", d.coverImg); set("fhero", d.heroImg); set("fcouple", d.coupleImg);
+    set("musik", d.music); set("galeri", (d.gallery || []).join("\n"));
+    [1, 2].forEach(function (i) {
+      var e = (d.events || [])[i - 1] || {};
+      set("e" + i + "t", e.title || ""); set("e" + i + "j", e.time || ""); set("e" + i + "p", e.place || "");
+      set("e" + i + "a", e.address || ""); set("e" + i + "d", e.date || "");
+    });
+    var nikah = $("jenis").value === "nikah";
+    ["box-nama2", "box-lengkap2", "box-ortu2"].forEach(function (i) { $(i).classList.toggle("hide", !nikah); });
+  }
+
+  function enc(o) {
+    var b = new TextEncoder().encode(JSON.stringify(o)), s = "";
+    b.forEach(function (x) { s += String.fromCharCode(x); });
+    return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+  function page(name) { return new URL(name, location.href).href; }
+  function valid(d) {
+    if (!d.names[0]) { alert("Isi nama panggilan dulu."); return false; }
+    if (!d.date) { alert("Isi tanggal acara."); return false; }
+    if (d.kode && !/^[a-z0-9-]{1,40}$/.test(d.kode)) { alert("Kode pesanan hanya boleh huruf kecil, angka, dan tanda strip."); return false; }
+    return true;
+  }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function shorten(u) { return u.length > 150 ? u.slice(0, 110) + "…(link panjang, tetap tersalin utuh)" : u; }
+  function copy(text, btn) {
+    var done = function () { var o = btn.textContent; btn.textContent = "Tersalin ✓"; setTimeout(function () { btn.textContent = o; }, 1500); };
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () { prompt("Salin manual:", text); });
+    else prompt("Salin manual:", text);
+  }
+
+  $("b-link").onclick = function () {
+    var d = collect(); if (!valid(d)) return;
+    var code = enc(d);
+    var longInv = page("undangan.html") + "?d=" + code;
+    var longGuest = page("tamu.html") + "?d=" + code;
+    var html = '<p class="ok">Link siap dipakai.</p>' +
+      '<h3>1. Link undangan (langsung jadi, tanpa unggah apa pun)</h3><code>' + esc(shorten(longInv)) + '</code><button class="btn alt" data-c="' + esc(longInv) + '">Salin link undangan (tambahkan &amp;to=NamaTamu)</button>' +
+      '<h3>2. Link pembuat tamu untuk pelanggan</h3><code>' + esc(shorten(longGuest)) + '</code><button class="btn alt" data-c="' + esc(longGuest) + '">Salin link untuk pelanggan</button>';
+    if (d.kode) {
+      html += '<h3>3. Versi pendek (butuh file pesanan diunggah)</h3>' +
+        '<p class="hint">Unduh file .json, lalu unggah ke folder <b>pesanan/</b> di GitHub dengan nama <b>' + esc(d.kode) + '.json</b>. Setelah itu dua link ini aktif:</p>' +
+        '<code>' + esc(page("undangan.html") + "?o=" + d.kode) + '</code>' +
+        '<code>' + esc(page("tamu.html") + "?o=" + d.kode) + '</code>' +
+        '<button class="btn alt" data-c="' + esc(page("tamu.html") + "?o=" + d.kode) + '">Salin link pendek untuk pelanggan</button>';
+    }
+    html += '<p class="hint" style="margin-top:10px">Link panjang berisi seluruh data pesanan, jadi mengubah isi pesanan berarti membuat link baru. Link pendek lebih rapi dan isinya bisa diubah kapan saja lewat file .json.</p>';
+    $("out").innerHTML = html; $("out").classList.add("show");
+    $("out").querySelectorAll("[data-c]").forEach(function (b) { b.onclick = function () { copy(b.getAttribute("data-c"), b); }; });
+    $("out").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  };
+  $("b-prev").onclick = function () {
+    var d = collect(); if (!valid(d)) return;
+    window.open(page("undangan.html") + "?d=" + enc(d) + "&to=Bapak%20Ahmad", "_blank");
+  };
+  $("b-json").onclick = function () {
+    var d = collect(); if (!valid(d)) return;
+    if (!d.kode) { alert("Isi kode pesanan dulu untuk memberi nama file."); return; }
+    var blob = new Blob([JSON.stringify(d, null, 2)], { type: "application/json" });
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = d.kode + ".json";
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+  $("b-save").onclick = function () {
+    try { localStorage.setItem("kreasi-draft", JSON.stringify(collect())); alert("Draft tersimpan di browser ini."); }
+    catch (e) { alert("Browser tidak mengizinkan penyimpanan draft."); }
+  };
+  $("b-load").onchange = function (ev) {
+    var f = ev.target.files[0]; if (!f) return;
+    var r = new FileReader();
+    r.onload = function () { try { fill(JSON.parse(r.result)); } catch (e) { alert("File tidak bisa dibaca."); } };
+    r.readAsText(f);
+  };
+  try { var s = localStorage.getItem("kreasi-draft"); if (s) fill(JSON.parse(s)); } catch (e) {}
+})();
+</script>
+</body>
+</html>

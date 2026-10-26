@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Undangan Digital</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Fredoka:wght@500;600&family=Lora:ital,wght@0,500;0,600;1,500&family=Montserrat:wght@400;600&family=Nunito:wght@400;700&family=Poppins:wght@400;600&family=Plus+Jakarta+Sans:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo/demo.css">
+<style>.msg{min-height:100vh;display:grid;place-content:center;text-align:center;padding:30px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#444}</style>
+</head>
+<body class="t-maroon">
+<div class="app" id="app"></div>
+<script src="assets/config.js"></script>
+<script>
+(function () {
+  var THEMES = ["t-elegan", "t-rustic", "t-ceria", "t-maroon"];
+  var p = new URLSearchParams(location.search);
+  var app = document.getElementById("app");
+
+  function fail(msg) { app.innerHTML = '<div class="msg"><div><h2>Undangan tidak ditemukan</h2><p style="margin-top:.5rem">' + msg + '</p></div></div>'; }
+  function dec(s) {
+    s = s.replace(/-/g, "+").replace(/_/g, "/");
+    while (s.length % 4) s += "=";
+    var bin = atob(s), arr = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return JSON.parse(new TextDecoder().decode(arr));
+  }
+  function start(data) {
+    if (!data || !Array.isArray(data.names) || !data.names.length) return fail("Data undangan tidak lengkap.");
+    var theme = THEMES.indexOf(data.theme) >= 0 ? data.theme : "t-maroon";
+    document.body.className = theme;
+    data.live = true; data.base = "";
+    data.people = Array.isArray(data.people) ? data.people : [];
+    data.events = Array.isArray(data.events) ? data.events : [];
+    data.heading = data.heading || "Undangan";
+    window.DEMO = data;
+    var s = document.createElement("script");
+    s.src = "demo/demo.js";
+    document.body.appendChild(s);
+  }
+
+  try {
+    if (p.get("d")) {
+      start(dec(p.get("d")));
+    } else if (p.get("o")) {
+      var code = p.get("o");
+      if (!/^[a-z0-9-]{1,60}$/i.test(code)) return fail("Kode pesanan tidak valid.");
+      fetch("pesanan/" + code + ".json", { cache: "no-store" })
+        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+        .then(start)
+        .catch(function () { fail("Periksa kembali link yang kamu terima."); });
+    } else {
+      fail("Link ini belum berisi data undangan.");
+    }
+  } catch (e) { fail("Link tidak valid."); }
+})();
+</script>
+</body>
+</html>

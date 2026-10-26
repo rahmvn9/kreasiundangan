@@ -1,45 +1,86 @@
 (function () {
   var D = window.DEMO, S = window.SITE;
+  var LIVE = !!D.live;                                  // true = undangan asli pelanggan
+  var B = (D.base != null) ? D.base : "../";            // awalan path ke folder assets
   var app = document.getElementById("app");
   var params = new URLSearchParams(location.search);
-  var guest = params.get("to") || "Nama Tamu";
+  var guest = (params.get("to") || "").trim().slice(0, 60) || "Nama Tamu";
 
-  // tanggal acara: selalu 45 hari dari hari ini supaya hitung mundur berjalan
-  var target = new Date();
-  target.setDate(target.getDate() + (D.daysAhead || 45));
-  target.setHours(D.hour || 8, 0, 0, 0);
-  var dateStr = new Intl.DateTimeFormat("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(target);
-  var names = D.names.join(" & ");
+  // aman untuk teks maupun atribut HTML
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  // hanya izinkan alamat gambar/musik yang wajar
+  function safeUrl(u) {
+    u = String(u || "").trim();
+    if (!u || /^(javascript|data|vbscript):/i.test(u)) return "";
+    u = u.replace(/\s/g, "%20");
+    if (/["'()<>\\`]/.test(u)) return "";
+    return u;
+  }
+  function waNum(n) {
+    n = String(n || "").replace(/\D/g, "");
+    if (n.indexOf("0") === 0) n = "62" + n.slice(1);
+    return n;
+  }
 
-  function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+  var target = null;
+  if (D.date) { target = new Date(D.date); if (isNaN(target)) target = null; }
+  if (!target) {
+    target = new Date();
+    target.setDate(target.getDate() + (D.daysAhead || 45));
+    target.setHours(D.hour || 8, 0, 0, 0);
+  }
+  function fmt(d) {
+    return new Intl.DateTimeFormat("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(d);
+  }
+  var dateStr = fmt(target);
+  var names = D.names.filter(Boolean).join(" & ");
+  document.title = (LIVE ? "Undangan " : "Demo ") + names;
 
   var people = D.people.map(function (p, i) {
     return (i > 0 && D.kind === "nikah" ? '<div class="amp">&amp;</div>' : "") +
-      '<div class="person reveal"><div class="avatar">' + p.icon + '</div><h3>' + esc(p.name) + '</h3><p class="muted">' + esc(p.sub) + '</p></div>';
+      '<div class="person reveal"><div class="avatar">' + esc(p.icon || "✦") + '</div><h3>' + esc(p.name) + '</h3><p class="muted">' + esc(p.sub) + '</p></div>';
   }).join("");
 
   var events = D.events.map(function (e) {
+    var d = dateStr;
+    if (e.date) { var ed = new Date(e.date + "T00:00"); if (!isNaN(ed)) d = fmt(ed); }
     return '<div class="event reveal"><h3>' + esc(e.title) + '</h3>' +
-      '<p class="when">' + esc(dateStr) + '</p><p>' + esc(e.time) + '</p>' +
+      '<p class="when">' + esc(d) + '</p><p>' + esc(e.time) + '</p>' +
       '<p><b>' + esc(e.place) + '</b></p><p>' + esc(e.address) + '</p>' +
-      '<a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(e.place + " " + e.address) + '">📍 Buka Peta</a></div>';
+      '<a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent((e.place || "") + " " + (e.address || "")) + '">📍 Buka Peta</a></div>';
   }).join("");
 
+  var photos = (D.gallery || []).map(safeUrl).filter(Boolean);
   var gallery = "";
-  if (D.gallery && D.gallery.length) {
-    D.gallery.forEach(function (src, i) {
-      gallery += '<div class="ph"><img loading="lazy" alt="Foto ' + (i + 1) + '" src="' + src + '"></div>';
+  if (photos.length) {
+    photos.forEach(function (src, i) {
+      gallery += '<div class="ph"><img loading="lazy" alt="Foto ' + (i + 1) + '" src="' + esc(src) + '"></div>';
     });
-  } else {
-    for (var i = 1; i <= 6; i++) gallery += '<div><span>' + D.galleryIcon + '<small>FOTO ' + i + '</small></span></div>';
+  } else if (!LIVE) {
+    for (var i = 1; i <= 6; i++) gallery += '<div><span>' + esc(D.galleryIcon || "✦") + '<small>FOTO ' + i + '</small></span></div>';
   }
-  var couplePhoto = D.coupleImg ? '<div class="couple-photo reveal"><img alt="Foto mempelai" src="' + D.coupleImg + '"></div>' : "";
+  var coupleSrc = safeUrl(D.coupleImg);
+  var couplePhoto = coupleSrc ? '<div class="couple-photo reveal"><img alt="Foto" src="' + esc(coupleSrc) + '"></div>' : "";
   function bgPhoto(src, pos) {
-    return src ? ' style="background-image:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.15) 40%,rgba(0,0,0,.65)),url(' + src + ');background-size:cover;background-position:' + (pos || "center top") + '"' : "";
+    src = safeUrl(src);
+    return src ? ' style="background-image:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.15) 40%,rgba(0,0,0,.65)),url(' + esc(src) + ');background-size:cover;background-position:' + esc(pos || "center top") + '"' : "";
   }
 
+  var gallerySection = gallery
+    ? '<section class="s gallery"><span class="kicker">Galeri</span><h2 class="title">Momen Kami</h2>' +
+      (LIVE ? "" : '<p class="muted">Pada undangan asli, kotak ini berisi foto pelanggan.</p>') +
+      '<div class="g">' + gallery + '</div></section>'
+    : "";
+
+  var rsvpNote = LIVE
+    ? "Konfirmasi kehadiran dan ucapan akan dikirim lewat WhatsApp ke tuan rumah."
+    : "Coba isi formulir di bawah. Ini hanya demo, data tidak dikirim ke mana pun.";
+
   app.innerHTML =
-    '<section class="s hero' + (D.heroImg ? ' photo' : '') + '"' + bgPhoto(D.heroImg, D.heroPos) + '><span class="kicker" style="color:inherit">' + esc(D.heading) + '</span>' +
+    '<section class="s hero' + (safeUrl(D.heroImg) ? ' photo' : '') + '"' + bgPhoto(D.heroImg, D.heroPos) + '><span class="kicker" style="color:inherit">' + esc(D.heading) + '</span>' +
       '<h1>' + esc(names) + '</h1><p class="date">' + esc(dateStr) + '</p></section>' +
 
     '<section class="s quote"><span class="kicker">' + esc(D.quoteTitle) + '</span>' +
@@ -53,15 +94,14 @@
 
     '<section class="s"><span class="kicker">Rangkaian Acara</span><h2 class="title">Waktu &amp; Tempat</h2>' + events + '</section>' +
 
-    '<section class="s gallery"><span class="kicker">Galeri</span><h2 class="title">Momen Kami</h2>' +
-      '<p class="muted">Pada undangan asli, kotak ini berisi foto kamu.</p><div class="g">' + gallery + '</div></section>' +
+    gallerySection +
 
     '<section class="s"><span class="kicker">RSVP</span><h2 class="title">Konfirmasi Kehadiran</h2>' +
-      '<p class="muted">Coba isi formulir di bawah. Ini hanya demo, data tidak dikirim ke mana pun.</p>' +
-      '<form id="rsvp"><div><label>Nama</label><input name="nama" required value="' + esc(guest === "Nama Tamu" ? "" : guest) + '" placeholder="Nama kamu"></div>' +
+      '<p class="muted">' + esc(rsvpNote) + '</p>' +
+      '<form id="rsvp"><div><label>Nama</label><input name="nama" required maxlength="60" value="' + esc(guest === "Nama Tamu" ? "" : guest) + '" placeholder="Nama kamu"></div>' +
       '<div><label>Kehadiran</label><select name="hadir"><option>Hadir</option><option>Tidak Hadir</option><option>Masih Ragu</option></select></div>' +
-      '<div><label>Ucapan &amp; Doa</label><textarea name="ucapan" required placeholder="Tulis ucapan..."></textarea></div>' +
-      '<button class="btn" type="submit">Kirim Ucapan</button></form>' +
+      '<div><label>Ucapan &amp; Doa</label><textarea name="ucapan" required maxlength="500" placeholder="Tulis ucapan..."></textarea></div>' +
+      '<button class="btn" type="submit">' + (LIVE ? "Kirim via WhatsApp" : "Kirim Ucapan") + '</button></form>' +
       '<div id="wishes"></div></section>' +
 
     '<section class="s closing"><span class="kicker" style="color:inherit">Terima Kasih</span>' +
@@ -72,30 +112,35 @@
   // sampul
   var cover = document.createElement("div");
   cover.id = "cover";
-  if (D.coverImg) {
+  var coverSrc = safeUrl(D.coverImg);
+  if (coverSrc) {
     cover.classList.add("photo");
-    cover.style.backgroundImage = "linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,.2) 40%,rgba(0,0,0,.75)),url(" + D.coverImg + ")";
+    cover.style.backgroundImage = "linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,.2) 40%,rgba(0,0,0,.75)),url(" + coverSrc + ")";
     cover.style.backgroundSize = "cover";
     cover.style.backgroundPosition = D.coverPos || "center top";
   }
-  var frame = D.coverFrame ? '<div class="frame"><img alt="" src="' + D.coverFrame + '"></div>' : "";
+  var frameSrc = safeUrl(D.coverFrame);
+  var frame = frameSrc ? '<div class="frame"><img alt="" src="' + esc(frameSrc) + '"></div>' : "";
   cover.innerHTML = '<div>' + frame + '<div class="heading">' + esc(D.heading) + '</div><h1>' + esc(names) + '</h1>' +
     '<p class="date">' + esc(dateStr) + '</p><p class="to">Kepada Yth. Bapak/Ibu/Saudara/i</p>' +
     '<p class="guest">' + esc(guest) + '</p><button class="btn" id="openBtn">Buka Undangan</button></div>';
   document.body.appendChild(cover);
   document.body.classList.add("locked");
 
-  // bar bawah + musik
-  var bar = document.createElement("div");
-  bar.className = "bar";
-  bar.innerHTML = '<a class="back" href="../index.html#tema">← Semua Tema</a>' +
-    '<a class="order" target="_blank" rel="noopener" href="' + window.waLink("Halo " + S.brand + ", saya mau pesan tema \"" + D.themeName + "\".") + '">Pesan Tema Ini</a>';
-  document.body.appendChild(bar);
+  // bar bawah (khusus demo) + musik
+  var bar = null;
+  if (!LIVE) {
+    bar = document.createElement("div");
+    bar.className = "bar";
+    bar.innerHTML = '<a class="back" href="../index.html#tema">← Semua Tema</a>' +
+      '<a class="order" target="_blank" rel="noopener" href="' + window.waLink("Halo " + S.brand + ", saya mau pesan tema \"" + D.themeName + "\".") + '">Pesan Tema Ini</a>';
+    document.body.appendChild(bar);
+  }
 
   var music = document.createElement("button");
   music.className = "music"; music.textContent = "♪"; music.setAttribute("aria-label", "Musik");
   document.body.appendChild(music);
-  var audio = new Audio("../assets/musik.mp3");
+  var audio = new Audio(safeUrl(D.music) || (B + "assets/musik.mp3"));
   audio.loop = true;
   var hasAudio = true;
   audio.addEventListener("error", function () { hasAudio = false; music.classList.remove("show"); });
@@ -108,7 +153,7 @@
     cover.classList.add("open");
     document.body.classList.remove("locked");
     setTimeout(function () { cover.style.display = "none"; }, 950);
-    bar.classList.add("show");
+    if (bar) bar.classList.add("show");
     if (hasAudio) {
       audio.play().then(function () { music.classList.add("play"); }).catch(function () {});
       music.classList.add("show");
@@ -127,7 +172,6 @@
   }
   tick(); setInterval(tick, 1000);
 
-  // animasi muncul saat di-scroll
   function observe() {
     var els = document.querySelectorAll(".reveal");
     if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
@@ -137,21 +181,33 @@
     els.forEach(function (e) { io.observe(e); });
   }
 
-  // RSVP demo
   function toast(msg) {
     var t = document.createElement("div");
     t.className = "toast"; t.textContent = msg; document.body.appendChild(t);
     setTimeout(function () { t.classList.add("show"); }, 20);
     setTimeout(function () { t.classList.remove("show"); setTimeout(function () { t.remove(); }, 400); }, 3200);
   }
+
   document.getElementById("rsvp").addEventListener("submit", function (ev) {
     ev.preventDefault();
     var f = ev.target;
+    var nama = f.nama.value.trim(), hadir = f.hadir.value, ucapan = f.ucapan.value.trim();
     var w = document.createElement("div");
     w.className = "wish";
-    w.innerHTML = "<b>" + esc(f.nama.value) + "</b><em>" + esc(f.hadir.value) + "</em><p>" + esc(f.ucapan.value) + "</p>";
+    w.innerHTML = "<b>" + esc(nama) + "</b><em>" + esc(hadir) + "</em><p>" + esc(ucapan) + "</p>";
     document.getElementById("wishes").prepend(w);
     f.ucapan.value = "";
-    toast("Terkirim! (Ini hanya demo)");
+    if (LIVE) {
+      var num = waNum(D.rsvpWa);
+      if (num) {
+        var text = "Assalamualaikum, saya " + nama + ".\nKonfirmasi kehadiran: " + hadir + ".\nUcapan: " + ucapan;
+        window.open("https://wa.me/" + num + "?text=" + encodeURIComponent(text), "_blank", "noopener");
+        toast("Membuka WhatsApp...");
+      } else {
+        toast("Terima kasih, ucapanmu tercatat.");
+      }
+    } else {
+      toast("Terkirim! (Ini hanya demo)");
+    }
   });
 })();
