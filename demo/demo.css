@@ -1,0 +1,135 @@
+/* ---------- dasar demo ---------- */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body.locked{overflow:hidden;height:100vh}
+a{color:inherit}
+.app{max-width:480px;margin:0 auto;background:var(--bg);min-height:100vh;box-shadow:0 0 60px rgba(0,0,0,.12);position:relative}
+h1,h2,h3{font-family:var(--head);font-weight:600;line-height:1.15}
+section.s{padding:56px 28px;text-align:center;position:relative}
+.kicker{font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;color:var(--accent);margin-bottom:.8rem;display:block}
+.title{font-size:2rem;margin-bottom:.8rem}
+.muted{opacity:.78;font-size:.95rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.8rem 1.6rem;border-radius:var(--btn-radius);background:var(--accent);color:var(--on-accent);font-weight:600;font-family:var(--body);font-size:.92rem;border:0;cursor:pointer;text-decoration:none;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+
+/* ---------- cover ---------- */
+#cover{position:fixed;inset:0;z-index:100;display:grid;place-content:center;text-align:center;padding:32px;background:var(--cover-bg);color:var(--cover-ink);transition:transform .9s cubic-bezier(.7,0,.2,1),opacity .9s}
+#cover.open{transform:translateY(-100%);opacity:.4}
+#cover .heading{font-size:.78rem;letter-spacing:.38em;text-transform:uppercase;opacity:.85}
+#cover h1{font-size:clamp(2.6rem,12vw,3.6rem);margin:.8rem 0;font-weight:500}
+#cover .date{opacity:.9;margin-bottom:2rem;font-size:.95rem}
+#cover .to{font-size:.8rem;opacity:.8}
+#cover .guest{font-family:var(--head);font-size:1.4rem;margin:.2rem 0 1.6rem}
+#cover .btn{background:var(--cover-btn);color:var(--cover-btn-ink)}
+
+/* ---------- hero ---------- */
+.hero{min-height:88vh;display:grid;place-content:center;background:var(--hero-bg);color:var(--cover-ink)}
+.hero h1{font-size:3rem;font-weight:500;margin:.6rem 0}
+.hero .date{font-size:1rem;opacity:.9}
+
+/* ---------- quote & people ---------- */
+.quote{background:var(--alt)}
+.quote p{font-style:italic;max-width:34ch;margin:0 auto}
+.person{margin:0 auto 2rem;max-width:300px}
+.avatar{width:150px;height:150px;border-radius:var(--avatar-radius);margin:0 auto 1rem;background:var(--avatar-bg);display:grid;place-content:center;font-size:3rem;border:4px solid var(--accent)}
+.person h3{font-size:1.6rem}
+.amp{font-family:var(--head);font-size:2.2rem;color:var(--accent);margin:-.4rem 0 1.2rem}
+
+/* ---------- hitung mundur ---------- */
+.count{background:var(--alt)}
+.cd{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:1.2rem}
+.cd div{background:var(--card);border:1px solid var(--line);border-radius:var(--card-radius);padding:14px 4px}
+.cd b{display:block;font-family:var(--head);font-size:1.8rem;color:var(--accent)}
+.cd span{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;opacity:.7}
+
+/* ---------- acara ---------- */
+.event{background:var(--card);border:1px solid var(--line);border-radius:var(--card-radius);padding:26px 22px;margin:0 auto 18px}
+.event h3{font-size:1.4rem;margin-bottom:.4rem;color:var(--accent)}
+.event .when{font-weight:600}
+.event p{opacity:.85;font-size:.93rem;margin:.2rem 0}
+.event .btn{margin-top:1rem}
+
+/* ---------- galeri ---------- */
+.gallery{background:var(--alt)}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:1.2rem}
+.g div{aspect-ratio:1;border-radius:var(--card-radius);display:grid;place-content:center;font-size:1.8rem;color:rgba(255,255,255,.9)}
+.g div:nth-child(1){background:var(--g1)}.g div:nth-child(2){background:var(--g2)}
+.g div:nth-child(3){background:var(--g2)}.g div:nth-child(4){background:var(--g1)}
+.g div:nth-child(5){background:var(--g1)}.g div:nth-child(6){background:var(--g2)}
+.g small{font-size:.7rem;display:block;letter-spacing:.1em}
+
+/* ---------- RSVP ---------- */
+form{display:grid;gap:12px;text-align:left;margin-top:1.2rem}
+label{font-size:.8rem;font-weight:600;letter-spacing:.04em}
+input,select,textarea{width:100%;padding:.75rem .9rem;border-radius:var(--field-radius);border:1px solid var(--line);background:var(--card);font:inherit;color:var(--ink)}
+textarea{min-height:90px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+#wishes{margin-top:1.6rem;display:grid;gap:10px;text-align:left}
+.wish{background:var(--card);border:1px solid var(--line);border-radius:var(--card-radius);padding:12px 16px;font-size:.9rem}
+.wish b{display:block;color:var(--accent)}
+.wish em{font-size:.75rem;opacity:.7;font-style:normal}
+
+/* ---------- penutup & bar bawah ---------- */
+.closing{background:var(--hero-bg);color:var(--cover-ink)}
+.closing .credit{margin-top:2rem;font-size:.78rem;opacity:.7}
+.bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(120%);width:min(480px,100%);display:flex;gap:8px;padding:10px 14px;background:rgba(20,20,20,.92);backdrop-filter:blur(8px);z-index:60;transition:transform .5s .4s}
+.bar.show{transform:translateX(-50%) translateY(0)}
+.bar a{flex:1;text-align:center;padding:.65rem;border-radius:99px;font-size:.82rem;font-weight:700;text-decoration:none;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+.bar .back{background:#2e2e2e;color:#fff}
+.bar .order{background:#1fa855;color:#fff}
+.music{position:fixed;right:max(14px,calc(50% - 226px));bottom:76px;z-index:61;width:46px;height:46px;border-radius:50%;border:0;background:var(--accent);color:var(--on-accent);font-size:1.2rem;cursor:pointer;display:none;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.music.show{display:block}
+.music.play{animation:spin 4s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;left:50%;top:18px;transform:translateX(-50%) translateY(-150%);background:#222;color:#fff;padding:.7rem 1.2rem;border-radius:12px;z-index:200;font-size:.85rem;transition:transform .4s;max-width:90%;text-align:center;font-family:'Plus Jakarta Sans',sans-serif}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s,transform .8s}
+.reveal.in{opacity:1;transform:none}
+.pad-bar{height:70px}
+
+/* =========================================================
+   TEMA 1 — ELEGAN EMAS
+   ========================================================= */
+.t-elegan{
+  --bg:#0f1b30;--alt:#13223d;--card:#172a49;--ink:#efe6cf;--line:#2c4167;
+  --accent:#d9b660;--on-accent:#0f1b30;--head:'Cormorant Garamond',serif;--body:'Montserrat',sans-serif;
+  --btn-radius:2px;--card-radius:2px;--field-radius:2px;--avatar-radius:50%;--avatar-bg:#1d3560;
+  --cover-bg:radial-gradient(circle at 50% 30%,#1d3560,#0a1222 75%);--cover-ink:#f2e3b3;--cover-btn:#d9b660;--cover-btn-ink:#0f1b30;
+  --hero-bg:linear-gradient(180deg,#0a1222,#16294a);--g1:#2a4476;--g2:#b8933e;
+}
+.t-elegan .event,.t-elegan .cd div{border-color:#d9b660aa}
+.t-elegan .title{letter-spacing:.04em;font-weight:500}
+.t-elegan #cover::before,.t-elegan .hero::before{content:'';position:absolute;inset:18px;border:1px solid #d9b66088;pointer-events:none}
+.t-elegan .hero{position:relative}
+
+/* =========================================================
+   TEMA 2 — RUSTIC FLORAL
+   ========================================================= */
+.t-rustic{
+  --bg:#fbf7ee;--alt:#eef2e4;--card:#ffffff;--ink:#3d4a35;--line:#d9e0c8;
+  --accent:#6f8a5a;--on-accent:#fff;--head:'Lora',serif;--body:'Poppins',sans-serif;
+  --btn-radius:99px;--card-radius:22px;--field-radius:12px;--avatar-radius:50% 50% 50% 50% / 60% 60% 40% 40%;--avatar-bg:#dfe8cf;
+  --cover-bg:linear-gradient(170deg,#e9eedf,#c6d6b4);--cover-ink:#3d4a35;--cover-btn:#6f8a5a;--cover-btn-ink:#fff;
+  --hero-bg:linear-gradient(170deg,#dbe6cb,#b9cda3);--g1:#8fa87a;--g2:#c9a98a;
+}
+.t-rustic .s::before{content:'🌿';display:block;font-size:1.5rem;margin-bottom:.6rem;opacity:.8}
+.t-rustic .hero::before,.t-rustic .closing::before{content:'🌸 🌿 🌸'!important;letter-spacing:.4em}
+.t-rustic #cover::before{content:'🌿';font-size:2.4rem;display:block;margin-bottom:.6rem}
+
+/* =========================================================
+   TEMA 3 — CERIA ANAK
+   ========================================================= */
+.t-ceria{
+  --bg:#fffaf0;--alt:#fff0c9;--card:#ffffff;--ink:#3b2a6b;--line:#ffd3dc;
+  --accent:#ff6f91;--on-accent:#fff;--head:'Fredoka',sans-serif;--body:'Nunito',sans-serif;
+  --btn-radius:99px;--card-radius:26px;--field-radius:16px;--avatar-radius:50%;--avatar-bg:#ffe27a;
+  --cover-bg:radial-gradient(circle at 20% 20%,#ffe27a 0 14%,transparent 15%),radial-gradient(circle at 85% 80%,#7fe0d0 0 18%,transparent 19%),linear-gradient(160deg,#ff9ab0,#ffcf6b);--cover-ink:#3b2a6b;--cover-btn:#3b2a6b;--cover-btn-ink:#fff;
+  --hero-bg:linear-gradient(160deg,#ffcf6b,#ff9ab0);--g1:#ff8aa5;--g2:#59c9b8;
+}
+.t-ceria .title{font-weight:600}
+.t-ceria #cover::before{content:'🎈🎂🎈';font-size:2.4rem;display:block;margin-bottom:.6rem}
+.t-ceria .hero::before{content:'🎉';font-size:2.6rem;display:block}
+.t-ceria .event{border:3px dashed var(--accent)}
+.t-ceria .cd div{border:2px solid var(--accent)}
