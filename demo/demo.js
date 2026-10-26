@@ -192,22 +192,27 @@
     ev.preventDefault();
     var f = ev.target;
     var nama = f.nama.value.trim(), hadir = f.hadir.value, ucapan = f.ucapan.value.trim();
-    var w = document.createElement("div");
-    w.className = "wish";
-    w.innerHTML = "<b>" + esc(nama) + "</b><em>" + esc(hadir) + "</em><p>" + esc(ucapan) + "</p>";
-    document.getElementById("wishes").prepend(w);
-    f.ucapan.value = "";
-    if (LIVE) {
-      var num = waNum(D.rsvpWa);
-      if (num) {
-        var text = "Assalamualaikum, saya " + nama + ".\nKonfirmasi kehadiran: " + hadir + ".\nUcapan: " + ucapan;
-        window.open("https://wa.me/" + num + "?text=" + encodeURIComponent(text), "_blank", "noopener");
-        toast("Membuka WhatsApp...");
-      } else {
-        toast("Terima kasih, ucapanmu tercatat.");
-      }
+    if (!LIVE) {
+      var w = document.createElement("div");
+      w.className = "wish";
+      w.innerHTML = "<b>" + esc(nama) + "</b><em>" + esc(hadir) + "</em><p>" + esc(ucapan) + "</p>";
+      document.getElementById("wishes").prepend(w);
+      f.ucapan.value = "";
+      toast("Ditampilkan sementara untuk demo; data tidak disimpan.");
+      return;
+    }
+
+    var num = waNum(D.rsvpWa);
+    if (!num) {
+      toast("Nomor WhatsApp tuan rumah belum diatur. Ucapan belum terkirim.");
+      return;
+    }
+    var text = "Assalamualaikum, saya " + nama + ".\nKonfirmasi kehadiran: " + hadir + ".\nUcapan: " + ucapan;
+    var waWindow = window.open("https://wa.me/" + num + "?text=" + encodeURIComponent(text), "_blank");
+    if (waWindow) {
+      toast("WhatsApp dibuka. Tekan Kirim di WhatsApp untuk mengirim konfirmasi.");
     } else {
-      toast("Terkirim! (Ini hanya demo)");
+      toast("WhatsApp tidak terbuka. Izinkan pop-up atau salin data dan kirim manual.");
     }
   });
 })();
