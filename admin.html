@@ -37,7 +37,8 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
 <body>
 <div class="wrap">
   <h1>Admin Pesanan <span data-brand></span></h1>
-  <p class="sub">Isi data pesanan pelanggan, lalu salin link undangannya. <a href="dashboard-tema.html">Buka Dashboard Pembuat Tema</a>. Halaman admin tidak dicantumkan di menu situs; simpan alamatnya secara pribadi.</p>
+  <p class="sub">Isi data pesanan pelanggan, lalu salin link undangannya. <a href="dashboard-tema.html">Buka Dashboard Pembuat Tema</a>. Halaman ini tidak memiliki autentikasi; siapa pun yang mengetahui alamatnya dapat membukanya.</p>
+  <p class="hint" style="background:#fff3d6;border:1px solid #e4c77e;border-radius:10px;padding:10px 12px;margin:-8px 0 16px">Privasi: jangan masukkan data sensitif. Link panjang berisi data yang dapat dibaca siapa pun yang memiliki link. File JSON di folder pesanan pada repository publik juga dapat dibaca publik. Halaman statis ini tidak memverifikasi bahwa data undangan dibuat oleh admin.</p>
 
   <form id="f" autocomplete="off">
     <fieldset><legend>Pesanan</legend>
