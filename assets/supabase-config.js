@@ -4,5 +4,5 @@
  */
 window.KREASI_SUPABASE = {
   url: "",
-  key: ""
+  key: "sb_publishable_DtoODo6G26Y3YBjvzXFoCw_a8WhTHKw"
 };
