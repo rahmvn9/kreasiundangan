@@ -40,6 +40,14 @@ window.THEMES = [
     img: "assets/foto/maroon-5.webp"
   },
   {
+    slug: "tema-foto-romantis",
+    name: "Foto Romantis",
+    category: "Pernikahan",
+    desc: "Tema foto penuh layar dengan latar berbeda di tiap bagian dan dompet digital.",
+    price: "Mulai Rp 129.000",
+    img: "assets/foto/studio-krem.webp"
+  },
+  {
     slug: "tema-ceria-anak",
     name: "Ceria Anak",
     category: "Ulang Tahun",
