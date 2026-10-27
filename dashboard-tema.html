@@ -29,7 +29,7 @@ var $=function(id){return document.getElementById(id)};
 var defaults={themeName:"Sage Romance",slug:"sage-romance",baseTheme:"t-rustic",accent:"#6f8a5a",background:"#fbf7ee",alternate:"#eef2e4",ink:"#3d4a35",headingFont:"Lora",bodyFont:"Poppins",ornament:"floral",galleryAnimation:"fade",radius:"8px",coverStyle:"soft",frameStyle:"ornate",homeBg:"",peopleBg:"",eventBg:"",galleryBg:"",rsvpBg:"",walletBg:""};
 var keys=Object.keys(defaults);
 var presets={
- "t-foto":{accent:"#b18a52",background:"#fbf7f0",alternate:"#f2e8dc",ink:"#49372e",headingFont:"Cormorant Garamond",bodyFont:"Montserrat",ornament:"floral",galleryAnimation:"fade",radius:"8px",coverStyle:"soft",frameStyle:"thin",homeBg:"assets/foto/studio-krem.webp",peopleBg:"assets/foto/jas-krem.webp",eventBg:"assets/foto/taman-putih.webp",galleryBg:"assets/foto/maroon-5.webp",rsvpBg:"assets/foto/maroon-3.webp",walletBg:"assets/foto/maroon-9.webp"},
+ "t-foto":{accent:"#b18a52",background:"#fbf7f0",alternate:"#f2e8dc",ink:"#49372e",headingFont:"Cormorant Garamond",bodyFont:"Montserrat",ornament:"floral",galleryAnimation:"fade",radius:"8px",coverStyle:"soft",frameStyle:"thin",homeBg:"https://rahmvn9.github.io/kreasiundangan/assets/foto/studio-krem.webp",peopleBg:"https://rahmvn9.github.io/kreasiundangan/assets/foto/jas-krem.webp",eventBg:"https://rahmvn9.github.io/kreasiundangan/assets/foto/taman-putih.webp",galleryBg:"https://rahmvn9.github.io/kreasiundangan/assets/foto/maroon-5.webp",rsvpBg:"https://rahmvn9.github.io/kreasiundangan/assets/foto/maroon-3.webp",walletBg:"https://rahmvn9.github.io/kreasiundangan/assets/foto/maroon-9.webp"},
  "t-rustic":{accent:"#6f8a5a",background:"#fbf7ee",alternate:"#eef2e4",ink:"#3d4a35",headingFont:"Lora",bodyFont:"Poppins",ornament:"floral",galleryAnimation:"fade",radius:"8px",coverStyle:"soft",frameStyle:"ornate"},
  "t-elegan":{accent:"#d9b660",background:"#0f1b30",alternate:"#13223d",ink:"#efe6cf",headingFont:"Cormorant Garamond",bodyFont:"Montserrat",ornament:"classic",galleryAnimation:"fade",radius:"2px",coverStyle:"gradient",frameStyle:"double"},
  "t-maroon":{accent:"#9b2335",background:"#fff8f2",alternate:"#f8e9e4",ink:"#4a1620",headingFont:"Cormorant Garamond",bodyFont:"Montserrat",ornament:"classic",galleryAnimation:"zoom",radius:"20px",coverStyle:"gradient",frameStyle:"thin"},
@@ -54,7 +54,7 @@ function apply(o){
  var gallery=p.querySelector(".gallery");
  gallery.setAttribute("data-animation",o.galleryAnimation);
  gallery.style.animation=o.galleryAnimation==="fade"?"previewFade .6s ease both":o.galleryAnimation==="zoom"?"previewZoom .6s ease both":"previewSlide .6s ease both";
- var previewNodes=[p.querySelector(".cover"),p.querySelectorAll(".section")[0],p.querySelector(".preview-event"),p.querySelectorAll(".section")[2],p.querySelector(".preview-rsvp"),p.querySelector(".preview-wallet")];
+ var previewNodes=[p.querySelector(".cover"),p.querySelectorAll(".section")[1],p.querySelector(".preview-event"),p.querySelectorAll(".section")[2],p.querySelector(".preview-rsvp"),p.querySelector(".preview-wallet")];
  var bgKeys=["homeBg","peopleBg","eventBg","galleryBg","rsvpBg","walletBg"];
  previewNodes.forEach(function(node,i){if(!node)return;var u=String(o[bgKeys[i]]||"").trim();if(u&&!/^(javascript|data|vbscript):/i.test(u)){node.style.backgroundImage="linear-gradient(180deg,rgba(255,255,255,.68),rgba(255,255,255,.82)),url(\""+u.replace(/["\\]/g,"")+"\")";node.style.backgroundSize="cover";node.style.backgroundPosition="center";}});
 }
