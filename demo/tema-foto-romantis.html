@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Demo Tema Foto Romantis</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Montserrat:wght@400;600&family=Plus+Jakarta+Sans:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+</head>
+<body class="t-rustic">
+<div class="app" id="app"></div>
+<script src="../assets/config.js"></script>
+<script>
+window.DEMO = {
+  themeName: "Foto Romantis",
+  kind: "nikah",
+  heading: "The Wedding Of",
+  names: ["Rizky", "Ayu"],
+  daysAhead: 45,
+  hour: 8,
+  coverImg: "../assets/foto/studio-krem.webp",
+  coverPos: "center 20%",
+  heroImg: "../assets/foto/studio-krem.webp",
+  heroPos: "center 30%",
+  gallery: ["../assets/foto/studio-krem.webp","../assets/foto/jas-krem.webp","../assets/foto/taman-putih.webp","../assets/foto/maroon-5.webp","../assets/foto/maroon-3.webp","../assets/foto/maroon-9.webp"],
+  galleryIcon: "✦",
+  quoteTitle: "Dengan Menyebut Nama Allah",
+  quote: "Dan di antara tanda-tanda kebesaran-Nya, Dia menciptakan pasangan agar kamu merasa tenteram dan saling menyayangi.",
+  peopleTitle: "Kedua Mempelai",
+  people: [
+    {icon:"🤵",name:"Rizky Pratama",sub:"Putra Bapak Ahmad & Ibu Siti",photo:"../assets/foto/jas-krem.webp"},
+    {icon:"👰",name:"Ayu Lestari",sub:"Putri Bapak Budi & Ibu Rina",photo:"../assets/foto/taman-putih.webp"}
+  ],
+  events: [
+    {title:"Akad Nikah",time:"Pukul 08.00 WIB – selesai",place:"Masjid Al-Ikhlas",address:"Alamat acara dapat diubah di Admin Pesanan"},
+    {title:"Resepsi",time:"Pukul 11.00 – 14.00 WIB",place:"Gedung Serbaguna",address:"Alamat acara dapat diubah di Admin Pesanan"}
+  ],
+  wallet: {bank:"Contoh Bank",name:"Nama Mempelai",number:"0000000000"},
+  themeStyle: {
+    accent:"#b18a52",background:"#fbf7f0",alternate:"#f2e8dc",ink:"#49372e",
+    headingFont:"Cormorant Garamond",bodyFont:"Montserrat",ornament:"floral",
+    radius:"8px",coverStyle:"soft",frameStyle:"thin",
+    sectionBackgrounds:{
+      home:"../assets/foto/studio-krem.webp",
+      people:"../assets/foto/jas-krem.webp",
+      events:"../assets/foto/taman-putih.webp",
+      gallery:"../assets/foto/maroon-5.webp",
+      rsvp:"../assets/foto/maroon-3.webp",
+      wallet:"../assets/foto/maroon-9.webp"
+    }
+  },
+  galleryAnimation:"fade",
+  closingTitle:"Rizky & Ayu",
+  closing:"Terima kasih atas doa dan kehadiran Anda. Semoga kebahagiaan selalu menyertai kita."
+};
+</script>
+<script src="demo.js"></script>
+</body>
+</html>
