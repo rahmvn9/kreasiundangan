@@ -20,7 +20,7 @@
 <div class="cover"><small id="previewName">Sage Romance</small><h2>Rizky & Ayu</h2><p>Undangan Pernikahan · 20 Desember 2026</p></div>
 <div class="section"><div class="kicker">Mempelai</div><h3>Pasangan</h3><div class="portraits"><div><div class="portrait">🤵</div><strong>Rizky</strong><small>Putra Bapak Ahmad</small></div><div><div class="portrait">👰</div><strong>Ayu</strong><small>Putri Ibu Siti</small></div></div></div>
 <div class="section"><div class="kicker">Kisah Kami</div><h3>Love Story</h3><div class="story"><div><b>Awal Bertemu</b><br>Berawal dari perkenalan sederhana.</div><div><b>Menuju Hari Bahagia</b><br>Memilih melangkah bersama.</div></div></div>
-<div class="section"><div class="kicker">Galeri</div><h3>Momen Kami</h3><div class="gallery"><div>✦</div><div>✿</div><div>✦</div></div></div><div class="footer">Dengan penuh rasa syukur<br>Rizky & Ayu</div>
+<div class="section"><div class="kicker">Galeri</div><h3>Momen Kami</h3><div class="gallery"><div>✦</div><div>✿</div><div>✦</div></div></div><div class="section preview-event"><div class="kicker">Acara</div><h3>Waktu & Tempat</h3><p>Akad nikah dan resepsi</p></div><div class="section preview-rsvp"><div class="kicker">RSVP</div><h3>Konfirmasi Kehadiran</h3><p>Formulir konfirmasi tamu</p></div><div class="section preview-wallet"><div class="kicker">Hadiah</div><h3>Dompet Digital</h3><p>Informasi rekening dan QRIS</p></div><div class="footer">Dengan penuh rasa syukur<br>Rizky & Ayu</div>
 </div></div></section></main>
 <script>
 (function(){
@@ -53,9 +53,9 @@ function apply(o){
  var gallery=p.querySelector(".gallery");
  gallery.setAttribute("data-animation",o.galleryAnimation);
  gallery.style.animation=o.galleryAnimation==="fade"?"previewFade .6s ease both":o.galleryAnimation==="zoom"?"previewZoom .6s ease both":"previewSlide .6s ease both";
- var previewNodes=[p.querySelector(".cover"),p.querySelectorAll(".section")[0],p.querySelectorAll(".section")[1],p.querySelectorAll(".section")[2],p.querySelector(".footer"),p.querySelectorAll(".section")[0]];
+ var previewNodes=[p.querySelector(".cover"),p.querySelectorAll(".section")[0],p.querySelector(".preview-event"),p.querySelectorAll(".section")[2],p.querySelector(".preview-rsvp"),p.querySelector(".preview-wallet")];
  var bgKeys=["homeBg","peopleBg","eventBg","galleryBg","rsvpBg","walletBg"];
- previewNodes.forEach(function(node,i){if(!node)return;var u=String(o[bgKeys[i]]||"").trim();if(u&&!/^(javascript|data|vbscript):/i.test(u)){node.style.backgroundImage="linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.84)),url(\\\""+u.replace(/["\\]/g,"")+"\\\")";node.style.backgroundSize="cover";node.style.backgroundPosition="center";}});
+ previewNodes.forEach(function(node,i){if(!node)return;var u=String(o[bgKeys[i]]||"").trim();if(u&&!/^(javascript|data|vbscript):/i.test(u)){node.style.backgroundImage="linear-gradient(180deg,rgba(255,255,255,.68),rgba(255,255,255,.82)),url(\""+u.replace(/["\\]/g,"")+"\")";node.style.backgroundSize="cover";node.style.backgroundPosition="center";}});
 }
 function cssText(o){var cover=coverValue(o),buttonInk=readableText(o.accent);return "/* Tema: "+o.themeName.replace(/[\r\n*]/g," ")+" */\n."+o.slug+" { --bg:"+o.background+"; --alt:"+o.alternate+"; --card:#fff; --ink:"+o.ink+"; --line:"+o.accent+"55; --accent:"+o.accent+"; --on-accent:"+buttonInk+"; --head:'"+o.headingFont+"',serif; --body:'"+o.bodyFont+"',sans-serif; --card-radius:"+o.radius+"; --field-radius:"+o.radius+"; --cover-bg:"+cover+"; --cover-ink:"+o.ink+"; --cover-btn:"+o.accent+"; --cover-btn-ink:"+buttonInk+"; --hero-bg:"+cover+"; --g1:"+o.accent+"; --g2:"+o.alternate+"; }\n."+o.slug+" .s::before { "+(o.ornament==="none"?"content:none!important;":o.ornament==="minimal"?"opacity:.2;":"")+" }\n/* Tinjau kontras sebelum memasang ke demo/demo.css */\n"}
 function download(name,content,type){var a=document.createElement("a"),u=URL.createObjectURL(new Blob([content],{type:type}));a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000)}
