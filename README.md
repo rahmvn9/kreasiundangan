@@ -21,6 +21,8 @@ Harga paket contoh berada di `index.html`. Periksa dan ubah sebelum situs dipubl
 
 Admin membuat URL dengan parameter `?d=...` yang berisi data pesanan. Tidak perlu mengunggah file JSON ke GitHub. Kirim link undangan atau link pembuat tamu yang dihasilkan admin.
 
+**Penting — privasi dan penyalahgunaan:** isi parameter `?d=` hanya dikodekan Base64URL, bukan dienkripsi atau ditandatangani. Siapa pun yang memiliki URL dapat membaca data di dalamnya, dan siapa pun dapat menyusun URL dengan data atau foto sendiri yang akan ditampilkan pada domain situs ini. Jangan masukkan nomor identitas, alamat rumah pribadi, atau data sensitif. Untuk pesanan sungguhan, gunakan layanan backend yang memvalidasi data dan memberi akses terbatas; validasi JavaScript di halaman statis tidak dapat membuktikan bahwa data berasal dari admin.
+
 Untuk menyertakan nama tamu di link undangan, tambahkan parameter `&to=NamaTamu` (gunakan URL encoding untuk spasi dan karakter khusus).
 
 **Catatan:** perubahan data tidak otomatis memperbarui link panjang. Buat dan kirim ulang link setelah mengubah data pesanan.
@@ -45,7 +47,7 @@ Untuk memperbarui undangan dengan metode ini, unggah versi terbaru file JSON den
 - Foto yang digunakan pada demo diatur melalui `window.DEMO` di file tema dalam folder `demo/`.
 - Musik latar bersifat opsional. Periksa bahwa path file MP3 dapat diakses.
 
-Gunakan foto milik sendiri atau yang memiliki izin penggunaan. Jangan menyimpan data pribadi pelanggan di repository publik tanpa persetujuan.
+Gunakan foto milik sendiri atau yang memiliki izin penggunaan. Jangan menyimpan data pribadi pelanggan di repository publik tanpa persetujuan. **Setiap file di folder `pesanan/` pada repository publik dapat dibaca siapa pun.** Jika file berisi nama, nomor WhatsApp, atau detail acara pelanggan, jangan unggah ke repository publik; gunakan penyimpanan privat/backend. Menghapus file dari versi terbaru tidak otomatis menghapusnya dari riwayat commit Git.
 
 ## RSVP dan privasi data
 
