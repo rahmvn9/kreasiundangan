@@ -36,15 +36,32 @@
     return new Intl.DateTimeFormat("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(d);
   }
   var dateStr = fmt(target);
-  var names = D.names.filter(Boolean).join(" & ");
+  var names = (Array.isArray(D.names) ? D.names : []).filter(function (name) { return typeof name === "string" && name.trim(); }).map(function (name) { return name.trim(); }).join(" & ");
+  if (LIVE && !names) {
+    app.innerHTML = '<div class="msg"><div><h2>Data undangan tidak lengkap</h2><p>Nama pemilik acara belum diisi.</p></div></div>';
+    return;
+  }
   document.title = (LIVE ? "Undangan " : "Demo ") + names;
 
   var themeStyle = D.themeStyle || {};
+  function readableText(hex) {
+    if (typeof hex !== "string" || !/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(hex)) return "#fff";
+    var h = hex.slice(1);
+    if (h.length === 3) h = h.split("").map(function (x) { return x + x; }).join("");
+    var rgb = [0, 2, 4].map(function (i) { var v = parseInt(h.slice(i, i + 2), 16) / 255; return v <= .04045 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); });
+    var luminance = .2126 * rgb[0] + .7152 * rgb[1] + .0722 * rgb[2];
+    return luminance > .179 ? "#17211c" : "#fff";
+  }
   var styleVars = {accent:"--accent",background:"--bg",alternate:"--alt",ink:"--ink"};
   Object.keys(styleVars).forEach(function(key){
     var value=themeStyle[key];
     if(typeof value==="string" && /^#[0-9a-f]{3,8}$/i.test(value)) document.body.style.setProperty(styleVars[key],value);
   });
+  if (typeof themeStyle.accent === "string" && /^#[0-9a-f]{3}(?:[0-9a-f]{3})?$/i.test(themeStyle.accent)) {
+    var buttonInk = readableText(themeStyle.accent);
+    document.body.style.setProperty("--on-accent", buttonInk);
+    document.body.style.setProperty("--cover-btn-ink", buttonInk);
+  }
   [["headingFont","--head"],["bodyFont","--body"]].forEach(function(pair){
     var value=themeStyle[pair[0]];
     if(typeof value==="string" && /^(Cormorant Garamond|Montserrat|Lora|Poppins|Fredoka|Nunito|Plus Jakarta Sans|Georgia|Arial|serif|sans-serif)$/i.test(value))
@@ -156,6 +173,19 @@
       '<p class="credit">Undangan digital oleh ' + esc(S.brand) + '</p></section>' +
     '<div class="pad-bar"></div>';
 
+  function hideBrokenImages(root) {
+    root.querySelectorAll("img").forEach(function (img) {
+      function hide() {
+        var target = img.closest(".ph, .avatar.portrait, .couple-photo, .frame");
+        if (target) target.style.display = "none";
+        else img.style.display = "none";
+      }
+      img.addEventListener("error", hide);
+      if (img.complete && img.naturalWidth === 0) hide();
+    });
+  }
+  hideBrokenImages(app);
+
   // sampul
   var cover = document.createElement("div");
   cover.id = "cover";
@@ -171,6 +201,7 @@
   cover.innerHTML = '<div>' + frame + '<div class="heading">' + esc(D.heading) + '</div><h1>' + esc(names) + '</h1>' +
     '<p class="date">' + esc(dateStr) + '</p><p class="to">Kepada Yth. Bapak/Ibu/Saudara/i</p>' +
     '<p class="guest">' + esc(guest) + '</p><button class="btn" id="openBtn">Buka Undangan</button></div>';
+  hideBrokenImages(cover);
   document.body.appendChild(cover);
   document.body.classList.add("locked");
 
