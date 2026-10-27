@@ -223,7 +223,7 @@
   function applySectionBg(node, src) {
     src = safeUrl(src);
     if (!node || !src) return;
-    node.style.backgroundImage = "linear-gradient(180deg,rgba(255,255,255,.78),rgba(255,255,255,.86)),url(\\\""+src.replace(/["\\]/g,"")+"\\\")";
+    node.style.backgroundImage = "linear-gradient(180deg,rgba(255,255,255,.48),rgba(255,255,255,.68)),url(\""+src.replace(/["\\]/g,"")+"\")";
     node.style.backgroundSize = "cover";
     node.style.backgroundPosition = "center";
     node.style.backgroundRepeat = "no-repeat";
