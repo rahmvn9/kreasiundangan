@@ -113,7 +113,7 @@
     return '<div class="event reveal"><h3>' + esc(e.title) + '</h3>' +
       '<p class="when">' + esc(d) + '</p><p>' + esc(e.time) + '</p>' +
       '<p><b>' + esc(e.place) + '</b></p><p>' + esc(e.address) + '</p>' +
-      '<a class="btn" target="_blank" rel="noopener" href="' + esc((function(){var u=String(e.mapUrl||"").trim();if(/^https?:\\/\\//i.test(u)){try{var parsed=new URL(u);if(parsed.hostname==="maps.app.goo.gl"||parsed.hostname==="goo.gl"||parsed.hostname==="google.com"||parsed.hostname.endsWith(".google.com")||parsed.hostname==="maps.google.com")return parsed.href;}catch(err){}}return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent((e.place||"")+" "+(e.address||""));})()) + '">📍 Buka Lokasi di Google Maps</a></div>';
+      '<a class="btn" target="_blank" rel="noopener" href="' + esc((function(){var u=String(e.mapUrl||"").trim();if(u.indexOf("https://")===0||u.indexOf("http://")===0){try{var parsed=new URL(u);if(parsed.hostname==="maps.app.goo.gl"||parsed.hostname==="goo.gl"||parsed.hostname==="google.com"||parsed.hostname.endsWith(".google.com")||parsed.hostname==="maps.google.com")return parsed.href;}catch(err){}}return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent((e.place||"")+" "+(e.address||""));})()) + '">📍 Buka Lokasi di Google Maps</a></div>';
   }).join("");
 
   var photos = (D.gallery || []).map(safeUrl).filter(Boolean);
