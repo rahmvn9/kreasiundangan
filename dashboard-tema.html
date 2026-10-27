@@ -54,7 +54,7 @@ function apply(o){
  var gallery=p.querySelector(".gallery");
  gallery.setAttribute("data-animation",o.galleryAnimation);
  gallery.style.animation=o.galleryAnimation==="fade"?"previewFade .6s ease both":o.galleryAnimation==="zoom"?"previewZoom .6s ease both":"previewSlide .6s ease both";
- var previewNodes=[p.querySelector(".cover"),p.querySelectorAll(".section")[1],p.querySelector(".preview-event"),p.querySelectorAll(".section")[2],p.querySelector(".preview-rsvp"),p.querySelector(".preview-wallet")];
+ var previewNodes=[p.querySelector(".cover"),p.querySelectorAll(".section")[0],p.querySelector(".preview-event"),p.querySelectorAll(".section")[2],p.querySelector(".preview-rsvp"),p.querySelector(".preview-wallet")];
  var bgKeys=["homeBg","peopleBg","eventBg","galleryBg","rsvpBg","walletBg"];
  previewNodes.forEach(function(node,i){if(!node)return;var u=String(o[bgKeys[i]]||"").trim();if(u&&!/^(javascript|data|vbscript):/i.test(u)){node.style.backgroundImage="linear-gradient(180deg,rgba(255,255,255,.68),rgba(255,255,255,.82)),url(\""+u.replace(/["\\]/g,"")+"\")";node.style.backgroundSize="cover";node.style.backgroundPosition="center";}});
 }
