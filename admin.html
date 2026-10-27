@@ -68,9 +68,6 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
       <div class="row">
         <div><label>Keterangan 1 (orang tua)</label><input id="ortu1" value="Putra Bapak Hasan &amp; Ibu Wati"></div>
         <div id="box-ortu2"><label>Keterangan 2 (orang tua)</label><input id="ortu2" value="Putri Bapak Rudi &amp; Ibu Dewi"></div>
-      </div><div class="row">
-        <div><label>Foto individu mempelai 1</label><input id="fpeople1" placeholder="assets/pesanan/kode/mempelai-1.webp"></div>
-        <div id="box-fpeople2"><label>Foto individu mempelai 2</label><input id="fpeople2" placeholder="assets/pesanan/kode/mempelai-2.webp"></div>
       </div>
     </fieldset>
 
@@ -111,7 +108,11 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
         <div><label>Foto bagian atas (hero)</label><input id="fhero" value="assets/foto/maroon-9.webp"></div>
       </div>
       <div class="row">
-        <div><label>Foto pasangan / pemilik acara</label><input id="fcouple" value="assets/foto/maroon-3.webp"></div>
+        <div><label>Foto mempelai pria (opsional)</label><input id="fpeople1" placeholder="https://... atau assets/pesanan/kode/mempelai-1.webp"></div>
+        <div id="box-fpeople2"><label>Foto mempelai wanita (opsional)</label><input id="fpeople2" placeholder="https://... atau assets/pesanan/kode/mempelai-2.webp"></div>
+      </div>
+      <p class="hint">Foto individu akan menggantikan ikon pada bagian nama mempelai. Kosongkan jika ingin memakai ikon. Foto pasangan lama tidak lagi ditampilkan di bagian tersebut.</p>
+      <div class="row">
         <div><label>Musik (opsional, alamat file mp3)</label><input id="musik" placeholder="assets/musik.mp3"></div>
       </div>
       <div class="row one"><div><label>Galeri (satu alamat per baris)</label><textarea id="galeri" rows="4">assets/foto/maroon-1.webp
