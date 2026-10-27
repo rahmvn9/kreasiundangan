@@ -125,6 +125,11 @@ assets/foto/maroon-4.webp
 assets/foto/maroon-6.webp
 assets/foto/maroon-8.webp</textarea></div></div>
     </fieldset>
+    <fieldset><legend>Dompet digital / hadiah (opsional)</legend>
+      <div class="row"><div><label>Nama bank / e-wallet</label><input id="walletBank" placeholder="BCA, BRI, DANA, OVO, GoPay"></div><div><label>Nama pemilik rekening</label><input id="walletName" placeholder="Nama pemilik"></div></div>
+      <div class="row"><div><label>Nomor rekening / e-wallet</label><input id="walletNumber" placeholder="Nomor rekening atau akun"></div><div><label>URL gambar QRIS (opsional)</label><input id="walletQr" placeholder="https://.../qris.png atau assets/pesanan/..."></div></div>
+      <p class="hint">Bagian dompet digital tampil jika minimal satu data diisi. Jangan masukkan PIN atau kata sandi.</p>
+    </fieldset>
   </form>
 
   <div class="out" id="out"></div>
@@ -198,6 +203,7 @@ assets/foto/maroon-8.webp</textarea></div></div>
       coupleImg: "",
       gallery: lines($("galeri").value),
       music: $("musik").value.trim(),
+      wallet: { bank: $("walletBank").value.trim(), name: $("walletName").value.trim(), number: $("walletNumber").value.trim(), qr: $("walletQr").value.trim() },
       rsvpWa: $("rsvp").value.trim(),
       closingTitle: $("cjudul").value.trim(), closing: $("closing").value.trim(),
       kode: $("kode").value.trim()
@@ -226,6 +232,8 @@ assets/foto/maroon-8.webp</textarea></div></div>
     set("cjudul", d.closingTitle); set("closing", d.closing);
     set("fcover", d.coverImg); set("fhero", d.heroImg); set("fcouple", d.coupleImg);
     set("musik", d.music); set("galeri", (d.gallery || []).join("\n"));
+    set("walletBank", d.wallet && d.wallet.bank); set("walletName", d.wallet && d.wallet.name);
+    set("walletNumber", d.wallet && d.wallet.number); set("walletQr", d.wallet && d.wallet.qr);
     [1, 2].forEach(function (i) {
       var e = (d.events || [])[i - 1] || {};
       set("e" + i + "t", e.title || ""); set("e" + i + "j", e.time || ""); set("e" + i + "p", e.place || "");
