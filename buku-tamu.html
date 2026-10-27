@@ -30,11 +30,22 @@
  function showSession(session){$('loginCard').classList.toggle('hidden',!!session);$('dashboard').classList.toggle('hidden',!session);if(session)loadRows();}
  async function loadRows(){
    message($('dataMsg'),'Memuat data…');$('refreshBtn').disabled=true;
-   let q=db.from('guestbook').select('id,invitation_slug,guest_name,attendance,message,created_at').order('created_at',{ascending:false}).limit(1000);
-   const slug=$('slugFilter').value.trim();if(slug)q=q.eq('invitation_slug',slug);
-   const {data,error}=await q;$('refreshBtn').disabled=false;
-   if(error){records=[];message($('dataMsg'),'Gagal memuat data: '+error.message,true);render();return;}
-   records=data||[];message($('dataMsg'),records.length+' data dimuat.');render();
+   const slug=$('slugFilter').value.trim();
+   let all=[], offset=0, error=null, batch=[];
+   try {
+     do {
+       let q=db.from('guestbook').select('id,invitation_slug,guest_name,attendance,message,created_at').order('created_at',{ascending:false}).range(offset,offset+999);
+       if(slug)q=q.eq('invitation_slug',slug);
+       const result=await q;
+       if(result.error){error=result.error;break;}
+       batch=result.data||[];
+       all=all.concat(batch);
+       offset+=batch.length;
+     } while(batch.length===1000);
+   } catch(e) { error=e; }
+   $('refreshBtn').disabled=false;
+   if(error){records=[];message($('dataMsg'),'Gagal memuat data: '+(error.message||error),true);render();return;}
+   records=all;message($('dataMsg'),records.length+' data dimuat.');render();
  }
  function render(){
    $('total').textContent=records.length;$('present').textContent=records.filter(x=>x.attendance==='Hadir').length;$('other').textContent=records.filter(x=>x.attendance!=='Hadir').length;
@@ -45,7 +56,7 @@
  $('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;message($('loginMsg'),'Memeriksa akun…');const {error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});$('loginBtn').disabled=false;message($('loginMsg'),error?error.message:'Berhasil masuk.',!!error);if(!error)showSession((await db.auth.getSession()).data.session);});
  $('logoutBtn').onclick=async()=>{await db.auth.signOut();showSession(null);};
  $('refreshBtn').onclick=loadRows;
- $('csvBtn').onclick=()=>{if(!records.length){message($('dataMsg'),'Tidak ada data untuk diekspor.');return;}const cell=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const csv='Waktu,Slug Undangan,Nama,Kehadiran,Ucapan\r\n'+records.map(x=>[new Date(x.created_at).toLocaleString('id-ID'),x.invitation_slug,x.guest_name,x.attendance,x.message].map(cell).join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));a.download='buku-tamu-kreasi-undangan.csv';a.click();URL.revokeObjectURL(a.href);};
+ $('csvBtn').onclick=()=>{if(!records.length){message($('dataMsg'),'Tidak ada data untuk diekspor.');return;}const cell=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const csv='Waktu,Slug Undangan,Nama,Kehadiran,Ucapan\r\n'+records.map(x=>[new Date(x.created_at).toLocaleString('id-ID'),x.invitation_slug,x.guest_name,x.attendance,x.message].map(cell).join(',')).join('\r\n');const a=document.createElement('a');const url=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));a.href=url;a.download='buku-tamu-kreasi-undangan.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
  db.auth.getSession().then(({data})=>showSession(data.session));
 })();
 </script></body></html>
