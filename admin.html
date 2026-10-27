@@ -324,12 +324,50 @@ assets/foto/maroon-8.webp</textarea></div></div>
     try { localStorage.setItem("kreasi-draft", JSON.stringify(collect())); alert("Draft tersimpan di browser ini."); }
     catch (e) { alert("Browser tidak mengizinkan penyimpanan draft."); }
   };
-  $("preset-load").onchange=function(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var p=JSON.parse(r.result);if(!p||!p.themeStyle)throw 0;if(["t-elegan","t-rustic","t-ceria","t-maroon","t-foto"].indexOf(p.theme)>=0)$("tema").value=p.theme;window.KREASI_THEME_PRESET={themeStyle:p.themeStyle,galleryAnimation:p.galleryAnimation||"fade"};alert("Preset tema diterapkan pada pesanan ini.");}catch(e){alert("Preset tidak valid.");}};r.readAsText(f);ev.target.value="";};
+  function applyThemePreset(p) {
+    if (!p || !p.themeStyle || typeof p.themeStyle !== "object") throw new Error("Preset tidak memiliki themeStyle.");
+    var allowedThemes = ["t-elegan", "t-rustic", "t-ceria", "t-maroon", "t-foto"];
+    var theme = p.theme || p.baseTheme;
+    if (allowedThemes.indexOf(theme) >= 0) $("tema").value = theme;
+    window.KREASI_THEME_PRESET = {
+      themeStyle: p.themeStyle,
+      galleryAnimation: ["fade", "zoom", "slide"].indexOf(p.galleryAnimation) >= 0 ? p.galleryAnimation : "fade"
+    };
+  }
+  $("tema").addEventListener("change", function () {
+    // Jangan biarkan preset lama menimpa tema yang baru dipilih.
+    window.KREASI_THEME_PRESET = undefined;
+  });
+  $("preset-load").onchange = function (ev) {
+    var f = ev.target.files[0]; if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        var p = JSON.parse(r.result);
+        applyThemePreset(p);
+        alert("Preset visual diterapkan. Data mempelai dan acara tetap dipertahankan. Klik Buat link dan Unduh JSON untuk menyertakan preset ini.");
+      } catch (e) { alert("File preset tidak valid. Gunakan JSON hasil ekspor dari Dashboard Tema."); }
+    };
+    r.readAsText(f); ev.target.value = "";
+  };
   $("b-load").onchange = function (ev) {
     var f = ev.target.files[0]; if (!f) return;
     var r = new FileReader();
-    r.onload = function () { try { fill(JSON.parse(r.result)); } catch (e) { alert("File tidak bisa dibaca."); } };
-    r.readAsText(f);
+    r.onload = function () {
+      try {
+        var d = JSON.parse(r.result);
+        // JSON dari Dashboard Tema hanya berisi preset visual, bukan data pesanan.
+        if (d && d.themeStyle && !Array.isArray(d.names) && !Array.isArray(d.people)) {
+          applyThemePreset(d);
+          alert("Ini file preset tema, bukan file pesanan. Tema diterapkan tanpa mengubah data mempelai. Untuk data pelanggan, gunakan file JSON pesanan.");
+          return;
+        }
+        if (!d || typeof d !== "object") throw new Error("JSON tidak valid");
+        fill(d);
+        alert("Data pesanan dimuat. Periksa nama mempelai, tanggal, dan acara sebelum membuat link.");
+      } catch (e) { alert("File JSON tidak valid atau formatnya tidak didukung."); }
+    };
+    r.readAsText(f); ev.target.value = "";
   };
   try { var s = localStorage.getItem("kreasi-draft"); if (s) fill(JSON.parse(s)); } catch (e) {}
 })();
