@@ -32,6 +32,9 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
 .out h3{font-size:.92rem;margin:.6rem 0 .1rem}
 .ok{color:#178f47;font-weight:700;font-size:.82rem}
 .hide{display:none}
+  .person-photo-preview{display:flex;align-items:center;justify-content:center;gap:10px;min-height:100px;margin-top:8px;padding:10px;border:1px dashed var(--line);border-radius:12px;color:var(--muted,#777);font-size:.8rem}
+  .person-photo-preview img{width:88px;height:88px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);background:#fff}
+  .person-photo-preview img[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -108,10 +111,12 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
         <div><label>Foto bagian atas (hero)</label><input id="fhero" value="assets/foto/maroon-9.webp"></div>
       </div>
       <div class="row">
-        <div><label>Foto mempelai pria (opsional)</label><input id="fpeople1" placeholder="https://... atau assets/pesanan/kode/mempelai-1.webp"></div>
-        <div id="box-fpeople2"><label>Foto mempelai wanita (opsional)</label><input id="fpeople2" placeholder="https://... atau assets/pesanan/kode/mempelai-2.webp"></div>
+        <div><label>Foto mempelai pria (opsional)</label><input id="fpeople1" placeholder="https://... atau assets/pesanan/kode/mempelai-1.webp">
+          <div class="person-photo-preview" id="preview-people1"><span>Pratinjau foto pria</span><img alt="Pratinjau foto mempelai pria" hidden></div></div>
+        <div id="box-fpeople2"><label>Foto mempelai wanita (opsional)</label><input id="fpeople2" placeholder="https://... atau assets/pesanan/kode/mempelai-2.webp">
+          <div class="person-photo-preview" id="preview-people2"><span>Pratinjau foto wanita</span><img alt="Pratinjau foto mempelai wanita" hidden></div></div>
       </div>
-      <p class="hint">Foto individu akan menggantikan ikon pada bagian nama mempelai. Kosongkan jika ingin memakai ikon. Foto pasangan lama tidak lagi ditampilkan di bagian tersebut.</p>
+      <p class="hint">Tempel URL foto publik atau path gambar di repository. Pratinjau muncul jika alamat foto dapat dimuat. Foto individu menggantikan ikon pada nama mempelai.</p>
       <div class="row">
         <div><label>Musik (opsional, alamat file mp3)</label><input id="musik" placeholder="assets/musik.mp3"></div>
       </div>
@@ -231,7 +236,27 @@ assets/foto/maroon-8.webp</textarea></div></div>
     window.KREASI_THEME_PRESET = d.themeStyle && typeof d.themeStyle === "object"
       ? { themeStyle: d.themeStyle, galleryAnimation: ["fade", "zoom", "slide"].indexOf(d.galleryAnimation) >= 0 ? d.galleryAnimation : "fade" }
       : undefined;
+    updatePeoplePhotoPreview();
   }
+
+  function updatePeoplePhotoPreview() {
+    [1, 2].forEach(function (n) {
+      var input = $("fpeople" + n), box = $("preview-people" + n);
+      if (!input || !box) return;
+      var img = box.querySelector("img"), label = box.querySelector("span");
+      var src = (input.value || "").trim();
+      if (!src || /^(javascript|data|vbscript):/i.test(src)) {
+        img.removeAttribute("src"); img.hidden = true; label.textContent = n === 1 ? "Pratinjau foto pria" : "Pratinjau foto wanita"; label.hidden = false; return;
+      }
+      img.onload = function () { img.hidden = false; label.hidden = true; };
+      img.onerror = function () { img.hidden = true; label.hidden = false; label.textContent = "Foto tidak dapat dimuat. Periksa URL/path."; };
+      img.src = src;
+    });
+  }
+  ["fpeople1", "fpeople2"].forEach(function (id) {
+    $(id).addEventListener("input", updatePeoplePhotoPreview);
+    $(id).addEventListener("change", updatePeoplePhotoPreview);
+  });
 
   function enc(o) {
     var b = new TextEncoder().encode(JSON.stringify(o)), s = "";
