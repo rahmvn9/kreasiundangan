@@ -188,6 +188,42 @@
   }
   hideBrokenImages(app);
 
+  // Fitur adaptasi: tombol tema, navigasi bawah, dan galeri lightbox.
+  var themeToggle = document.createElement("button");
+  themeToggle.className = "theme-toggle"; themeToggle.type = "button";
+  themeToggle.setAttribute("aria-label", "Ganti mode terang atau gelap"); themeToggle.textContent = "◐";
+  themeToggle.onclick = function () {
+    var dark = document.body.classList.toggle("user-dark");
+    themeToggle.setAttribute("aria-pressed", dark ? "true" : "false");
+    try { localStorage.setItem("kreasi-color-mode", dark ? "dark" : "light"); } catch (e) {}
+  };
+  try { if (localStorage.getItem("kreasi-color-mode") === "dark") document.body.classList.add("user-dark"); } catch (e) {}
+  document.body.appendChild(themeToggle);
+
+  var nav = document.createElement("nav"); nav.className = "invite-nav"; nav.setAttribute("aria-label", "Navigasi undangan");
+  nav.innerHTML = '<a href="#top" aria-label="Beranda">Beranda</a><a href="#mempelai">Mempelai</a><a href="#acara">Acara</a><a href="#galeri">Galeri</a><a href="#rsvp">RSVP</a>';
+  document.body.appendChild(nav);
+  var sections = app.querySelectorAll(".s");
+  if (sections[0]) sections[0].id = "top";
+  if (sections[2]) sections[2].id = "mempelai";
+  var eventSection = app.querySelector(".event"); if (eventSection) eventSection.closest(".s").id = "acara";
+  var gallerySectionNode = app.querySelector(".gallery.s"); if (gallerySectionNode) gallerySectionNode.id = "galeri";
+
+  var lightbox = document.createElement("div"); lightbox.className = "gallery-lightbox"; lightbox.hidden = true;
+  lightbox.innerHTML = '<button type="button" class="lightbox-close" aria-label="Tutup foto">×</button><a class="lightbox-open" target="_blank" rel="noopener" aria-label="Buka gambar asli">Buka gambar asli</a><img alt="Foto galeri diperbesar">';
+  document.body.appendChild(lightbox);
+  var lightboxImg = lightbox.querySelector("img"), lightboxLink = lightbox.querySelector("a");
+  app.querySelectorAll(".g .ph img").forEach(function (img) {
+    img.tabIndex = 0; img.setAttribute("role", "button"); img.setAttribute("aria-label", "Perbesar " + (img.alt || "foto"));
+    function openPhoto() { lightboxImg.src = img.currentSrc || img.src; lightboxLink.href = img.currentSrc || img.src; lightbox.hidden = false; document.body.classList.add("lightbox-open"); }
+    img.addEventListener("click", openPhoto);
+    img.addEventListener("keydown", function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); openPhoto(); } });
+  });
+  function closeLightbox() { lightbox.hidden = true; lightboxImg.removeAttribute("src"); document.body.classList.remove("lightbox-open"); }
+  lightbox.querySelector(".lightbox-close").onclick = closeLightbox;
+  lightbox.addEventListener("click", function (ev) { if (ev.target === lightbox) closeLightbox(); });
+  document.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && !lightbox.hidden) closeLightbox(); });
+
   // sampul
   var cover = document.createElement("div");
   cover.id = "cover";
