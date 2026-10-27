@@ -221,3 +221,12 @@ body{overscroll-behavior-y:contain}
 .btn{transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s ease,filter .25s ease}
 .btn:hover{transform:translateY(-2px);filter:brightness(1.04);box-shadow:0 8px 22px #0002}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto;scroll-snap-type:none}.reveal,.reveal.in,.event.reveal,.story-item.reveal,.g.reveal{opacity:1;transform:none;filter:none;transition:none!important;will-change:auto}.btn,.invite-nav a{transition:none!important}}
+
+
+/* Dompet digital dan enam bagian navigasi */
+.wallet-card{margin:16px auto 0;padding:16px;max-width:340px;border:1px solid var(--line);border-radius:var(--card-radius);background:rgba(255,255,255,.88);color:#292a27;box-shadow:0 8px 24px rgba(0,0,0,.08);overflow-wrap:anywhere}
+.wallet-card p{margin:.4rem 0}.wallet-number{font-size:1.15rem;font-weight:700;letter-spacing:.06em}
+.wallet-qr{display:block;width:min(100%,240px);height:auto;object-fit:contain;margin:12px auto;border-radius:10px;background:#fff}
+section.s.photo,section.s[style*="background-image"]{background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:scroll}
+.invite-nav{overflow-x:auto;white-space:nowrap;scrollbar-width:none}.invite-nav::-webkit-scrollbar{display:none}
+.invite-nav a{flex-shrink:0}
