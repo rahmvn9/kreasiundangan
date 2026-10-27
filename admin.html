@@ -206,7 +206,8 @@ assets/foto/maroon-8.webp</textarea></div></div>
       wallet: { bank: $("walletBank").value.trim(), name: $("walletName").value.trim(), number: $("walletNumber").value.trim(), qr: $("walletQr").value.trim() },
       rsvpWa: $("rsvp").value.trim(),
       closingTitle: $("cjudul").value.trim(), closing: $("closing").value.trim(),
-      kode: $("kode").value.trim()
+      kode: $("kode").value.trim(),
+      slug: ($("kode").value.trim() || ([$("nama1").value.trim(), $("nama2").value.trim()].filter(Boolean).join("-") + "-" + ($("tanggal").value || "").slice(0,10))).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "").slice(0,120)
     };
     [1, 2].forEach(function (n) {
       var t = $("e" + n + "t").value.trim(), p = $("e" + n + "p").value.trim();
