@@ -27,7 +27,11 @@
     return JSON.parse(new TextDecoder().decode(arr));
   }
   function start(data) {
-    if (!data || !Array.isArray(data.names) || !data.names.length) return fail("Data undangan tidak lengkap.");
+    if (!data || !Array.isArray(data.names)) return fail("Data undangan tidak lengkap.");
+    data.names = data.names.filter(function (name) { return typeof name === "string" && name.trim(); }).map(function (name) { return name.trim(); });
+    if (!data.names.length) return fail("Data undangan tidak lengkap: nama belum diisi.");
+    var eventDate = data.date ? new Date(data.date) : null;
+    if (!eventDate || isNaN(eventDate.getTime())) return fail("Data undangan tidak lengkap: tanggal acara belum diisi atau tidak valid.");
     var theme = THEMES.indexOf(data.theme) >= 0 ? data.theme : "t-maroon";
     document.body.className = theme;
     data.live = true; data.base = "";
