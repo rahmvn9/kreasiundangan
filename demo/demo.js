@@ -138,6 +138,13 @@
       (LIVE ? "" : '<p class="muted">Pada undangan asli, kotak ini berisi foto pelanggan.</p>') +
       '<div class="g">' + gallery + '</div></section>'
     : "";
+  var wallet = D.wallet || {};
+  var walletVisible = [wallet.bank, wallet.name, wallet.number, wallet.qr].some(function(v){return String(v || "").trim();});
+  var walletSection = walletVisible
+    ? '<section class="s wallet"><span class="kicker">Hadiah</span><h2 class="title">Dompet Digital</h2><p class="muted">Doa restu Anda adalah hadiah terbaik. Jika ingin memberi tanda kasih, dapat melalui:</p>' +
+      (wallet.bank || wallet.number ? '<div class="wallet-card"><b>' + esc(wallet.bank || "Rekening") + '</b><p>Atas nama: ' + esc(wallet.name || names) + '</p><p class="wallet-number">' + esc(wallet.number || "") + '</p>' + (wallet.number ? '<button type="button" class="btn wallet-copy" data-copy="' + esc(wallet.number) + '">Salin nomor</button>' : '') + '</div>' : '') +
+      (safeUrl(wallet.qr) ? '<div class="wallet-card"><p>Scan QR untuk memberi hadiah</p><img class="wallet-qr" loading="lazy" alt="QR dompet digital" src="' + esc(safeUrl(wallet.qr)) + '"></div>' : '') +
+      '</section>' : "";
 
   var rsvpNote = LIVE
     ? "Konfirmasi kehadiran dan ucapan akan dikirim lewat WhatsApp ke tuan rumah."
@@ -162,13 +169,15 @@
 
     gallerySection +
 
-    '<section class="s"><span class="kicker">RSVP</span><h2 class="title">Konfirmasi Kehadiran</h2>' +
+    '<section class="s rsvp"><span class="kicker">RSVP</span><h2 class="title">Konfirmasi Kehadiran</h2>' +
       '<p class="muted">' + esc(rsvpNote) + '</p>' +
       '<form id="rsvp"><div><label>Nama</label><input name="nama" required maxlength="60" value="' + esc(guest === "Nama Tamu" ? "" : guest) + '" placeholder="Nama kamu"></div>' +
       '<div><label>Kehadiran</label><select name="hadir"><option>Hadir</option><option>Tidak Hadir</option><option>Masih Ragu</option></select></div>' +
       '<div><label>Ucapan &amp; Doa</label><textarea name="ucapan" required maxlength="500" placeholder="Tulis ucapan..."></textarea></div>' +
       '<button class="btn" type="submit">' + (LIVE ? "Kirim via WhatsApp" : "Kirim Ucapan") + '</button></form>' +
       '<div id="wishes"></div></section>' +
+
+    walletSection +
 
     '<section class="s closing"><span class="kicker" style="color:inherit">Terima Kasih</span>' +
       '<h2 class="title">' + esc(D.closingTitle) + '</h2><p class="muted">' + esc(D.closing) + '</p>' +
@@ -201,13 +210,31 @@
   document.body.appendChild(themeToggle);
 
   var nav = document.createElement("nav"); nav.className = "invite-nav"; nav.setAttribute("aria-label", "Navigasi undangan");
-  nav.innerHTML = '<a href="#top" aria-label="Beranda">Beranda</a><a href="#mempelai">Mempelai</a><a href="#acara">Acara</a><a href="#galeri">Galeri</a><a href="#rsvp">RSVP</a>';
+  nav.innerHTML = '<a href="#top" aria-label="Beranda">Beranda</a><a href="#mempelai">Mempelai</a><a href="#acara">Acara</a><a href="#galeri">Galeri</a><a href="#rsvp">RSVP</a>' + (walletVisible ? '<a href="#dompet">Dompet</a>' : '');
   document.body.appendChild(nav);
   var sections = app.querySelectorAll(".s");
   if (sections[0]) sections[0].id = "top";
   if (sections[2]) sections[2].id = "mempelai";
   var eventSection = app.querySelector(".event"); if (eventSection) eventSection.closest(".s").id = "acara";
   var gallerySectionNode = app.querySelector(".gallery.s"); if (gallerySectionNode) gallerySectionNode.id = "galeri";
+  var rsvpSectionNode = app.querySelector(".rsvp.s"); if (rsvpSectionNode) rsvpSectionNode.id = "rsvp";
+  var walletSectionNode = app.querySelector(".wallet.s"); if (walletSectionNode) walletSectionNode.id = "dompet";
+  var sectionBgs = themeStyle.sectionBackgrounds || {};
+  function applySectionBg(node, src) {
+    src = safeUrl(src);
+    if (!node || !src) return;
+    node.style.backgroundImage = "linear-gradient(180deg,rgba(255,255,255,.78),rgba(255,255,255,.86)),url(\\\""+src.replace(/["\\]/g,"")+"\\\")";
+    node.style.backgroundSize = "cover";
+    node.style.backgroundPosition = "center";
+    node.style.backgroundRepeat = "no-repeat";
+  }
+  applySectionBg(sections[0], sectionBgs.home);
+  applySectionBg(sections[2], sectionBgs.people);
+  if (eventSection) applySectionBg(eventSection.closest(".s"), sectionBgs.events);
+  applySectionBg(gallerySectionNode, sectionBgs.gallery);
+  applySectionBg(rsvpSectionNode, sectionBgs.rsvp);
+  applySectionBg(walletSectionNode, sectionBgs.wallet);
+  app.querySelectorAll(".wallet-copy").forEach(function(btn){btn.addEventListener("click",function(){var value=btn.getAttribute("data-copy")||"";if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(value).then(function(){toast("Nomor berhasil disalin.");}).catch(function(){toast("Salin nomor secara manual: "+value);});}else{toast("Salin nomor secara manual: "+value);}});});
 
   var lightbox = document.createElement("div"); lightbox.className = "gallery-lightbox"; lightbox.hidden = true;
   lightbox.innerHTML = '<button type="button" class="lightbox-close" aria-label="Tutup foto">×</button><a class="lightbox-open" target="_blank" rel="noopener" aria-label="Buka gambar asli">Buka gambar asli</a><img alt="Foto galeri diperbesar">';
