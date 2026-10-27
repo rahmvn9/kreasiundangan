@@ -35,7 +35,23 @@
     var theme = THEMES.indexOf(data.theme) >= 0 ? data.theme : "t-maroon";
     document.body.className = theme;
     data.live = true; data.base = "";
-    data.people = Array.isArray(data.people) ? data.people : [];
+    data.people = Array.isArray(data.people) ? data.people.filter(function (person) { return person && typeof person === "object"; }) : [];
+    // Compatibilitas JSON lama: jangan biarkan bagian mempelai kosong jika names tersedia.
+    if (!data.people.length && data.names.length) {
+      data.people = [{ icon: data.kind === "nikah" ? "🤵" : "🎉", name: data.names[0], sub: "" }];
+      if ((data.kind === "nikah" || data.names.length > 1) && data.names[1]) {
+        data.people.push({ icon: "👰", name: data.names[1], sub: "" });
+      }
+    } else if ((data.kind === "nikah" || data.names.length > 1) && data.names[1] && data.people.length < 2) {
+      data.people.push({ icon: "👰", name: data.names[1], sub: "" });
+    }
+    data.people = data.people.slice(0, 2);
+    data.people.forEach(function (person, index) {
+      if (!person.name && data.names[index]) person.name = data.names[index];
+      if (!person.icon) person.icon = index === 0 ? (data.kind === "nikah" ? "🤵" : "🎉") : "👰";
+      if (!person.sub) person.sub = "";
+      if (!person.photo) person.photo = "";
+    });
     data.events = Array.isArray(data.events) ? data.events : [];
     data.heading = data.heading || "Undangan";
     window.DEMO = data;
