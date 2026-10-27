@@ -312,7 +312,7 @@ assets/foto/maroon-8.webp</textarea></div></div>
         '<code>' + esc(page("tamu.html") + "?o=" + d.kode) + '</code>' +
         '<button class="btn alt" data-c="' + esc(page("tamu.html") + "?o=" + d.kode) + '">Salin link pendek untuk pelanggan</button>';
     }
-    html += '<p class="hint" style="margin-top:10px">Link panjang berisi seluruh data pesanan, jadi mengubah isi pesanan berarti membuat link baru. Link pendek lebih rapi dan isinya bisa diubah kapan saja lewat file .json.</p>';
+    html += '<p class="hint" style="margin-top:10px"><b>Penting:</b> data belum otomatis tersimpan di server. Link panjang menyimpan data di dalam URL dan langsung bisa dibuka pelanggan, tetapi jika data diubah kamu harus membuat link baru. Agar link pendek tetap aktif dan data dapat diperbarui, unduh JSON pesanan lalu unggah ke folder <b>pesanan/</b> di GitHub dengan nama kode pesanan + <b>.json</b>. Draft lokal hanya tersimpan di browser/perangkat ini.</p>';
     $("out").innerHTML = html; $("out").classList.add("show");
     $("out").querySelectorAll("[data-c]").forEach(function (b) { b.onclick = function () { copy(b.getAttribute("data-c"), b); }; });
     $("out").scrollIntoView({ behavior: "smooth", block: "nearest" });
