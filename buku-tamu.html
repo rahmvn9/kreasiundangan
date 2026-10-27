@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard Buku Tamu — Kreasi Undangan</title>
+<style>
+:root{color-scheme:light;--ink:#202820;--muted:#657166;--line:#dce4dc;--bg:#f5f8f4;--card:#fff;--accent:#276749}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:1120px;margin:auto;padding:24px 16px 60px}h1{font-size:clamp(1.6rem,4vw,2.3rem);margin:.3rem 0}h2{font-size:1.15rem}p{color:var(--muted)}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin:16px 0;box-shadow:0 5px 20px #17281708}.row{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.field{display:grid;gap:6px;flex:1;min-width:210px}input{width:100%;padding:11px 12px;border:1px solid #cbd5cb;border-radius:9px;font:inherit}button,.btn{border:0;border-radius:9px;background:var(--accent);color:white;padding:11px 15px;font:600  .95rem system-ui;cursor:pointer;text-decoration:none}button.secondary{background:#e6eee7;color:#23432e}button.danger{background:#9c3333}button:disabled{opacity:.5;cursor:wait}.hidden{display:none!important}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.stat{padding:15px;border-radius:12px;background:#edf4ee}.stat b{display:block;font-size:1.7rem}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:700px}th,td{text-align:left;padding:11px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:.82rem;color:var(--muted)}.status{display:inline-block;border-radius:99px;background:#edf4ee;padding:3px 9px;font-size:.8rem}.note{font-size:.9rem}.error{color:#9c3333}.top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}a{color:var(--accent)}@media(max-width:520px){main{padding:16px 10px}.card{padding:15px}.stats{gap:7px}.stat{padding:10px}.stat b{font-size:1.35rem}}
+</style>
+</head>
+<body><main>
+<div class="top"><div><p style="margin:0">KREASI UNDANGAN</p><h1>Dashboard RSVP & Buku Tamu</h1></div><a href="./admin.html">Kembali ke Admin Undangan</a></div>
+<div id="configNotice" class="card hidden"><b>Konfigurasi Supabase belum lengkap.</b><p>Isi <code>url</code> dan <code>key</code> pada <code>assets/supabase-config.js</code>, lalu muat ulang halaman.</p></div>
+<section id="loginCard" class="card"><h2>Masuk Admin</h2><p>Gunakan email dan kata sandi akun yang dibuat di Supabase Authentication.</p><form id="loginForm" class="row"><label class="field">Email<input id="email" type="email" autocomplete="username" required></label><label class="field">Kata sandi<input id="password" type="password" autocomplete="current-password" required></label><button id="loginBtn">Masuk</button></form><p id="loginMsg" role="status"></p></section>
+<section id="dashboard" class="hidden">
+<div class="card"><div class="top"><div><h2>Data tamu</h2><p class="note">Kosongkan filter untuk melihat semua undangan.</p></div><button id="logoutBtn" class="secondary">Keluar</button></div><div class="row"><label class="field">Slug / ID undangan (opsional)<input id="slugFilter" placeholder="contoh: ani-budi-2026"></label><button id="refreshBtn">Muat data</button><button id="csvBtn" class="secondary">Ekspor CSV</button></div><p id="dataMsg" role="status"></p></div>
+<div class="stats"><div class="stat"><span>Total RSVP</span><b id="total">0</b></div><div class="stat"><span>Hadir</span><b id="present">0</b></div><div class="stat"><span>Tidak hadir / ragu</span><b id="other">0</b></div></div>
+<div class="card"><div class="table-wrap"><table><thead><tr><th>Waktu</th><th>Undangan</th><th>Nama tamu</th><th>Kehadiran</th><th>Ucapan</th></tr></thead><tbody id="rows"><tr><td colspan="5">Belum ada data.</td></tr></tbody></table></div></div>
+</section>
+</main>
+<script src="assets/supabase-config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+ const cfg=window.KREASI_SUPABASE||{}, notice=document.getElementById('configNotice');
+ const ready=!!(cfg.url&&cfg.key&&window.supabase);
+ if(!ready){notice.classList.remove('hidden');document.getElementById('loginCard').classList.add('hidden');return;}
+ const db=window.supabase.createClient(cfg.url,cfg.key);
+ const $=id=>document.getElementById(id);let records=[];
+ function message(el,s,bad){el.textContent=s||'';el.className=bad?'error':'';}
+ function showSession(session){$('loginCard').classList.toggle('hidden',!!session);$('dashboard').classList.toggle('hidden',!session);if(session)loadRows();}
+ async function loadRows(){
+   message($('dataMsg'),'Memuat data…');$('refreshBtn').disabled=true;
+   let q=db.from('guestbook').select('id,invitation_slug,guest_name,attendance,message,created_at').order('created_at',{ascending:false}).limit(1000);
+   const slug=$('slugFilter').value.trim();if(slug)q=q.eq('invitation_slug',slug);
+   const {data,error}=await q;$('refreshBtn').disabled=false;
+   if(error){records=[];message($('dataMsg'),'Gagal memuat data: '+error.message,true);render();return;}
+   records=data||[];message($('dataMsg'),records.length+' data dimuat.');render();
+ }
+ function render(){
+   $('total').textContent=records.length;$('present').textContent=records.filter(x=>x.attendance==='Hadir').length;$('other').textContent=records.filter(x=>x.attendance!=='Hadir').length;
+   const body=$('rows');body.replaceChildren();
+   if(!records.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=5;td.textContent='Belum ada RSVP untuk filter ini.';tr.append(td);body.append(tr);return;}
+   records.forEach(x=>{const tr=document.createElement('tr');[new Date(x.created_at).toLocaleString('id-ID'),x.invitation_slug,x.guest_name,x.attendance,x.message].forEach((v,i)=>{const td=document.createElement('td');if(i===3){const span=document.createElement('span');span.className='status';span.textContent=v;td.append(span);}else td.textContent=v;tr.append(td);});body.append(tr);});
+ }
+ $('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;message($('loginMsg'),'Memeriksa akun…');const {error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});$('loginBtn').disabled=false;message($('loginMsg'),error?error.message:'Berhasil masuk.',!!error);if(!error)showSession((await db.auth.getSession()).data.session);});
+ $('logoutBtn').onclick=async()=>{await db.auth.signOut();showSession(null);};
+ $('refreshBtn').onclick=loadRows;
+ $('csvBtn').onclick=()=>{if(!records.length){message($('dataMsg'),'Tidak ada data untuk diekspor.');return;}const cell=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const csv='Waktu,Slug Undangan,Nama,Kehadiran,Ucapan\r\n'+records.map(x=>[new Date(x.created_at).toLocaleString('id-ID'),x.invitation_slug,x.guest_name,x.attendance,x.message].map(cell).join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));a.download='buku-tamu-kreasi-undangan.csv';a.click();URL.revokeObjectURL(a.href);};
+ db.auth.getSession().then(({data})=>showSession(data.session));
+})();
+</script></body></html>
