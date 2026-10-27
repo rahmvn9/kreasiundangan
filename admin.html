@@ -149,11 +149,11 @@ assets/foto/maroon-8.webp</textarea></div></div>
   var evHtml = "";
   [1, 2].forEach(function (n) {
     evHtml += '<div style="border-top:1px dashed var(--line);padding-top:12px;margin-top:4px"><p style="font-weight:800;font-size:.85rem;margin-bottom:8px">Acara ' + n + (n === 2 ? " (opsional)" : "") + '</p>' +
-      '<div class="row"><div><label>Judul acara</label><input id="e' + n + 't" value="' + (n === 1 ? "Acara Lamaran" : "Resepsi Pernikahan") + '"></div>' +
+      '<div class="row"><div><label>Judul acara</label><input id="e' + n + 't" value="' + (n === 1 ? "Akad Nikah" : "Resepsi Pernikahan") + '"></div>' +
       '<div><label>Tanggal (kosongkan jika sama dengan tanggal utama)</label><input type="date" id="e' + n + 'd"></div></div>' +
       '<div class="row"><div><label>Jam</label><input id="e' + n + 'j" value="' + (n === 1 ? "Pukul 10.00 WIB – selesai" : "Pukul 13.00 – 16.00 WIB") + '"></div>' +
       '<div><label>Nama tempat</label><input id="e' + n + 'p" value="' + (n === 1 ? "Kediaman Mempelai Wanita" : "Gedung Serbaguna Sakinah") + '"></div></div>' +
-      '<div class="row one"><div><label>Alamat</label><input id="e' + n + 'a" value="' + (n === 1 ? "Jl. Melati No. 12, Kuala Tungkal" : "Jl. Pelabuhan No. 25, Kuala Tungkal") + '"></div></div></div>';
+      '<div class="row one"><div><label>Alamat</label><input id="e' + n + 'a" value="' + (n === 1 ? "Jl. Melati No. 12, Kuala Tungkal" : "Jl. Pelabuhan No. 25, Kuala Tungkal") + '"></div></div>' + '<div class="row one"><div><label>Link Google Maps (opsional)</label><input id="e' + n + 'm" type="url" placeholder="https://maps.app.goo.gl/... atau tautan Google Maps"></div></div></div>';
   });
   $("events").innerHTML = evHtml;
 
@@ -205,7 +205,7 @@ assets/foto/maroon-8.webp</textarea></div></div>
     [1, 2].forEach(function (n) {
       var t = $("e" + n + "t").value.trim(), p = $("e" + n + "p").value.trim();
       if (!t && !p) return;
-      var e = { title: t, time: $("e" + n + "j").value.trim(), place: p, address: $("e" + n + "a").value.trim() };
+      var e = { title: t, time: $("e" + n + "j").value.trim(), place: p, address: $("e" + n + "a").value.trim(), mapUrl: $("e" + n + "m").value.trim() };
       if ($("e" + n + "d").value) e.date = $("e" + n + "d").value;
       d.events.push(e);
     });
@@ -229,7 +229,7 @@ assets/foto/maroon-8.webp</textarea></div></div>
     [1, 2].forEach(function (i) {
       var e = (d.events || [])[i - 1] || {};
       set("e" + i + "t", e.title || ""); set("e" + i + "j", e.time || ""); set("e" + i + "p", e.place || "");
-      set("e" + i + "a", e.address || ""); set("e" + i + "d", e.date || "");
+      set("e" + i + "a", e.address || ""); set("e" + i + "d", e.date || ""); set("e" + i + "m", e.mapUrl || "");
     });
     var nikah = $("jenis").value === "nikah";
     ["box-nama2", "box-lengkap2", "box-ortu2", "box-fpeople2"].forEach(function (i) { $(i).classList.toggle("hide", !nikah); });
