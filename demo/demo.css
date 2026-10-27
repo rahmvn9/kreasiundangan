@@ -186,3 +186,10 @@ body.ornament-minimal .s::before,body.ornament-minimal .hero::before,body.orname
 body.ornament-classic #cover::before,body.ornament-minimal #cover::before{content:""!important;display:block;position:absolute;inset:16px;border:1px solid var(--cover-btn);pointer-events:none}
 body.ornament-floral .s::before,body.ornament-floral .hero::before,body.ornament-floral .closing::before{content:""!important;display:block;height:48px;margin:0 auto 12px;opacity:.45;background:radial-gradient(ellipse 13px 26px at 42% 50%,var(--accent) 0 40%,transparent 44%),radial-gradient(ellipse 13px 26px at 58% 50%,var(--accent) 0 40%,transparent 44%),radial-gradient(ellipse 24px 9px at 34% 35%,var(--accent) 0 40%,transparent 44%),radial-gradient(ellipse 24px 9px at 66% 35%,var(--accent) 0 40%,transparent 44%);background-repeat:no-repeat;background-position:center;background-size:100px 48px}
 body.ornament-floral #cover::before{content:""!important;display:block;position:absolute;inset:16px;border:1px solid var(--cover-btn);border-radius:48% 48% 8px 8px;pointer-events:none}
+
+
+/* Bingkai sampul dari Dashboard Pembuat Tema */
+body.frame-thin #cover:not(.photo)::before{content:"";position:absolute;inset:18px;border:1px solid var(--cover-btn);pointer-events:none}
+body.frame-double #cover:not(.photo)::before{content:"";position:absolute;inset:14px;border:3px double var(--cover-btn);pointer-events:none}
+body.frame-ornate #cover:not(.photo)::before{content:"";position:absolute;inset:18px;border:1px solid var(--cover-btn);border-radius:48% 48% 8px 8px;pointer-events:none}
+body.frame-none #cover:not(.photo)::before{content:none!important;display:none!important}
