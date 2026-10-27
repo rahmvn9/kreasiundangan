@@ -124,8 +124,8 @@
   } else if (!LIVE) {
     for (var i = 1; i <= 6; i++) gallery += '<div><span>' + esc(D.galleryIcon || "✦") + '<small>FOTO ' + i + '</small></span></div>';
   }
-  var coupleSrc = safeUrl(D.coupleImg);
-  var couplePhoto = coupleSrc ? '<div class="couple-photo reveal"><img alt="Foto" src="' + esc(coupleSrc) + '"></div>' : "";
+  // Foto pasangan lama sengaja tidak dirender; foto individu tampil di kartu masing-masing mempelai.
+  var couplePhoto = "";
   function bgPhoto(src, pos) {
     src = safeUrl(src);
     return src ? ' style="background-image:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.15) 40%,rgba(0,0,0,.65)),url(' + esc(src) + ');background-size:cover;background-position:' + esc(pos || "center top") + '"' : "";
