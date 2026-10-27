@@ -304,31 +304,99 @@
     setTimeout(function () { t.classList.remove("show"); setTimeout(function () { t.remove(); }, 400); }, 3200);
   }
 
-  document.getElementById("rsvp").addEventListener("submit", function (ev) {
+  // Muat konfigurasi dan SDK hanya saat form digunakan; key di sini harus publishable/anon.
+  var supabasePromise = null;
+  function getSupabase() {
+    if (supabasePromise) return supabasePromise;
+    supabasePromise = new Promise(function (resolve) {
+      function loadSdk() {
+        var cfg = window.KREASI_SUPABASE || {};
+        if (!cfg.url || !cfg.key || !window.supabase) { resolve(null); return; }
+        try { resolve(window.supabase.createClient(cfg.url, cfg.key)); } catch (_) { resolve(null); }
+      }
+      function loadScript(src, done) {
+        var script = document.createElement("script");
+        script.src = src; script.onload = done; script.onerror = function () { resolve(null); };
+        document.head.appendChild(script);
+      }
+      function loadConfig() {
+        if (window.KREASI_SUPABASE) {
+          if (window.supabase) loadSdk();
+          else loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2", loadSdk);
+          return;
+        }
+        loadScript(B + "assets/supabase-config.js", function () {
+          if (window.supabase) loadSdk();
+          else loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2", loadSdk);
+        });
+      }
+      loadConfig();
+    });
+    return supabasePromise;
+  }
+  function attendanceValue(value) {
+    var s = String(value || "").toLowerCase();
+    if (s.indexOf("tidak") >= 0 || s.indexOf("berhalangan") >= 0) return "Tidak Hadir";
+    if (s.indexOf("ragu") >= 0 || s.indexOf("belum") >= 0) return "Masih Ragu";
+    return "Hadir";
+  }
+  function invitationSlug() {
+    var slug = String(D.slug || "").trim().toLowerCase();
+    if (!slug) slug = String(document.title || location.pathname.split("/").filter(Boolean).pop() || "undangan")
+      .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 120);
+    return slug || "undangan";
+  }
+
+  document.getElementById("rsvp").addEventListener("submit", async function (ev) {
     ev.preventDefault();
     var f = ev.target;
-    var nama = f.nama.value.trim(), hadir = f.hadir.value, ucapan = f.ucapan.value.trim();
+    var nama = f.nama.value.trim().slice(0, 60), hadir = f.hadir.value, ucapan = f.ucapan.value.trim().slice(0, 500);
+    if (!nama || !ucapan) { toast("Nama dan ucapan wajib diisi."); return; }
+
+    // Buka WhatsApp langsung dari interaksi pengguna agar tidak diblokir browser.
+    var num = LIVE ? waNum(D.rsvpWa) : "";
+    var waWindow = null;
+    if (num) {
+      var waText = "Assalamualaikum, saya " + nama + ".\nKonfirmasi kehadiran: " + hadir + ".\nUcapan: " + ucapan;
+      waWindow = window.open("https://wa.me/" + num + "?text=" + encodeURIComponent(waText), "_blank");
+    }
+
+    var saved = false, saveError = null;
+    var db = await getSupabase();
+    if (db) {
+      var result = await db.from("guestbook").insert({
+        invitation_slug: invitationSlug(),
+        guest_name: nama,
+        attendance: attendanceValue(hadir),
+        message: ucapan
+      });
+      if (result.error) saveError = result.error;
+      else saved = true;
+    }
+
     if (!LIVE) {
       var w = document.createElement("div");
       w.className = "wish";
       w.innerHTML = "<b>" + esc(nama) + "</b><em>" + esc(hadir) + "</em><p>" + esc(ucapan) + "</p>";
       document.getElementById("wishes").prepend(w);
       f.ucapan.value = "";
-      toast("Ditampilkan sementara untuk demo; data tidak disimpan.");
+      if (saved) toast("RSVP dan ucapan berhasil disimpan.");
+      else if (saveError) toast("Gagal menyimpan ke database. Periksa konfigurasi Supabase.");
+      else toast("Demo saja: data belum tersimpan online. Atur Supabase untuk mengaktifkannya.");
       return;
     }
 
-    var num = waNum(D.rsvpWa);
-    if (!num) {
-      toast("Nomor WhatsApp tuan rumah belum diatur. Ucapan belum terkirim.");
-      return;
-    }
-    var text = "Assalamualaikum, saya " + nama + ".\nKonfirmasi kehadiran: " + hadir + ".\nUcapan: " + ucapan;
-    var waWindow = window.open("https://wa.me/" + num + "?text=" + encodeURIComponent(text), "_blank");
-    if (waWindow) {
-      toast("WhatsApp dibuka. Tekan Kirim di WhatsApp untuk mengirim konfirmasi.");
+    if (saved) {
+      toast(waWindow ? "RSVP tersimpan. Tekan Kirim di WhatsApp untuk mengirim pesan ke tuan rumah." : "RSVP berhasil disimpan.");
+      f.ucapan.value = "";
+    } else if (saveError) {
+      toast("RSVP gagal disimpan. Periksa koneksi atau konfigurasi Supabase.");
+    } else if (!num) {
+      toast("Supabase belum diatur dan nomor WhatsApp tuan rumah belum tersedia.");
+    } else if (waWindow) {
+      toast("Supabase belum diatur. WhatsApp dibuka; tekan Kirim untuk mengirim konfirmasi.");
     } else {
-      toast("WhatsApp tidak terbuka. Izinkan pop-up atau salin data dan kirim manual.");
+      toast("WhatsApp tidak terbuka. Periksa konfigurasi Supabase atau izinkan pop-up.");
     }
   });
 })();
