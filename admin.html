@@ -324,7 +324,7 @@ assets/foto/maroon-8.webp</textarea></div></div>
     try { localStorage.setItem("kreasi-draft", JSON.stringify(collect())); alert("Draft tersimpan di browser ini."); }
     catch (e) { alert("Browser tidak mengizinkan penyimpanan draft."); }
   };
-  $("preset-load").onchange=function(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var p=JSON.parse(r.result);if(!p||!p.themeStyle)throw 0;if(["t-elegan","t-rustic","t-ceria","t-maroon"].indexOf(p.theme)>=0)$("tema").value=p.theme;window.KREASI_THEME_PRESET={themeStyle:p.themeStyle,galleryAnimation:p.galleryAnimation||"fade"};alert("Preset tema diterapkan pada pesanan ini.");}catch(e){alert("Preset tidak valid.");}};r.readAsText(f);ev.target.value="";};
+  $("preset-load").onchange=function(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var p=JSON.parse(r.result);if(!p||!p.themeStyle)throw 0;if(["t-elegan","t-rustic","t-ceria","t-maroon","t-foto"].indexOf(p.theme)>=0)$("tema").value=p.theme;window.KREASI_THEME_PRESET={themeStyle:p.themeStyle,galleryAnimation:p.galleryAnimation||"fade"};alert("Preset tema diterapkan pada pesanan ini.");}catch(e){alert("Preset tidak valid.");}};r.readAsText(f);ev.target.value="";};
   $("b-load").onchange = function (ev) {
     var f = ev.target.files[0]; if (!f) return;
     var r = new FileReader();
