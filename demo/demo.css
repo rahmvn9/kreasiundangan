@@ -114,9 +114,9 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-
   --cover-bg:linear-gradient(170deg,#e9eedf,#c6d6b4);--cover-ink:#3d4a35;--cover-btn:#6f8a5a;--cover-btn-ink:#fff;
   --hero-bg:linear-gradient(170deg,#dbe6cb,#b9cda3);--g1:#8fa87a;--g2:#c9a98a;
 }
-.t-rustic .s::before{content:'🌿';display:block;font-size:1.5rem;margin-bottom:.6rem;opacity:.8}
-.t-rustic .hero::before,.t-rustic .closing::before{content:'🌸 🌿 🌸'!important;letter-spacing:.4em}
-.t-rustic #cover::before{content:'🌿';font-size:2.4rem;display:block;margin-bottom:.6rem}
+.t-rustic .s::before{content:"";display:block;width:100%;height:52px;margin:0 auto .6rem;opacity:.42;background:radial-gradient(ellipse 15px 28px at 42% 60%,var(--accent) 0 40%,transparent 44%),radial-gradient(ellipse 15px 28px at 58% 60%,var(--accent) 0 40%,transparent 44%),radial-gradient(ellipse 26px 10px at 34% 35%,var(--accent) 0 40%,transparent 44%),radial-gradient(ellipse 26px 10px at 66% 35%,var(--accent) 0 40%,transparent 44%);background-repeat:no-repeat;background-position:center;background-size:120px 52px}
+.t-rustic .hero::before,.t-rustic .closing::before{content:""!important;position:absolute;inset:18px 0 auto;width:100%;height:64px;background:radial-gradient(ellipse 20px 36px at 8% 50%,var(--accent) 0 38%,transparent 43%),radial-gradient(ellipse 20px 36px at 14% 30%,var(--accent) 0 38%,transparent 43%),radial-gradient(ellipse 20px 36px at 92% 50%,var(--accent) 0 38%,transparent 43%),radial-gradient(ellipse 20px 36px at 86% 30%,var(--accent) 0 38%,transparent 43%);opacity:.35;pointer-events:none}
+.t-rustic #cover::before{content:"";position:absolute;inset:18px;border:1px solid var(--cover-btn);border-radius:48% 48% 4px 4px;opacity:.6;pointer-events:none}
 
 /* =========================================================
    TEMA 3 — CERIA ANAK
@@ -129,8 +129,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-
   --hero-bg:linear-gradient(160deg,#ffcf6b,#ff9ab0);--g1:#ff8aa5;--g2:#59c9b8;
 }
 .t-ceria .title{font-weight:600}
-.t-ceria #cover::before{content:'🎈🎂🎈';font-size:2.4rem;display:block;margin-bottom:.6rem}
-.t-ceria .hero::before{content:'🎉';font-size:2.6rem;display:block}
+.t-ceria #cover::before{content:"";position:absolute;inset:18px;border:2px dashed var(--accent);border-radius:28px;pointer-events:none}.t-ceria .hero::before{content:"";position:absolute;inset:18px;border:2px dashed var(--accent);border-radius:28px;pointer-events:none}
 .t-ceria .event{border:3px dashed var(--accent)}
 .t-ceria .cd div{border:2px solid var(--accent)}
 
@@ -181,8 +180,9 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-
 .no-ornament .s::before,.no-ornament .hero::before,.no-ornament .closing::before,.no-ornament #cover::before{content:none!important;display:none!important}
 @media(prefers-reduced-motion:reduce){.reveal,.g .ph img{transition:none!important}.reveal{opacity:1;transform:none}}
 
-/* Dashboard theme preset ornament overrides */
-.ornament-classic .s::before,.ornament-classic .hero::before,.ornament-classic .closing::before{content:'✧  ❦  ✧'!important;letter-spacing:.35em;opacity:.75}
-.ornament-minimal .s::before,.ornament-minimal .hero::before,.ornament-minimal .closing::before{content:'·  ·  ·'!important;letter-spacing:.5em;opacity:.35}
-.ornament-classic #cover::before{content:'✧  ❦  ✧'!important;display:block;text-align:center;margin-bottom:.7rem}
-.ornament-minimal #cover::before{content:'·  ·  ·'!important;display:block;text-align:center;margin-bottom:.7rem;opacity:.35}
+/* Ornamen latar berbentuk ilustrasi CSS, bukan simbol teks. */
+body.ornament-classic .s::before,body.ornament-classic .hero::before,body.ornament-classic .closing::before{content:""!important;display:block;height:40px;margin:0 auto 12px;opacity:.65;background:linear-gradient(90deg,transparent 0 8%,var(--accent) 8.2% 8.5%,transparent 8.7% 91.3%,var(--accent) 91.5% 91.8%,transparent 92%),radial-gradient(ellipse at 8% 50%,transparent 0 15px,var(--accent) 16px 17px,transparent 18px),radial-gradient(ellipse at 92% 50%,transparent 0 15px,var(--accent) 16px 17px,transparent 18px);background-repeat:no-repeat;background-size:100% 2px,38px 38px,38px 38px;background-position:center,left center,right center}
+body.ornament-minimal .s::before,body.ornament-minimal .hero::before,body.ornament-minimal .closing::before{content:""!important;display:block;height:24px;margin:0 auto 10px;opacity:.35;background:linear-gradient(135deg,transparent 0 48%,var(--accent) 49% 50%,transparent 51%),linear-gradient(45deg,transparent 0 48%,var(--accent) 49% 50%,transparent 51%);background-repeat:no-repeat;background-size:28px 24px;background-position:center}
+body.ornament-classic #cover::before,body.ornament-minimal #cover::before{content:""!important;display:block;position:absolute;inset:16px;border:1px solid var(--cover-btn);pointer-events:none}
+body.ornament-floral .s::before,body.ornament-floral .hero::before,body.ornament-floral .closing::before{content:""!important;display:block;height:48px;margin:0 auto 12px;opacity:.45;background:radial-gradient(ellipse 13px 26px at 42% 50%,var(--accent) 0 40%,transparent 44%),radial-gradient(ellipse 13px 26px at 58% 50%,var(--accent) 0 40%,transparent 44%),radial-gradient(ellipse 24px 9px at 34% 35%,var(--accent) 0 40%,transparent 44%),radial-gradient(ellipse 24px 9px at 66% 35%,var(--accent) 0 40%,transparent 44%);background-repeat:no-repeat;background-position:center;background-size:100px 48px}
+body.ornament-floral #cover::before{content:""!important;display:block;position:absolute;inset:16px;border:1px solid var(--cover-btn);border-radius:48% 48% 8px 8px;pointer-events:none}
