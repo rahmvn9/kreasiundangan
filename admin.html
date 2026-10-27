@@ -225,7 +225,10 @@ assets/foto/maroon-8.webp</textarea></div></div>
       set("e" + i + "a", e.address || ""); set("e" + i + "d", e.date || "");
     });
     var nikah = $("jenis").value === "nikah";
-    ["box-nama2", "box-lengkap2", "box-ortu2"].forEach(function (i) { $(i).classList.toggle("hide", !nikah); });
+    ["box-nama2", "box-lengkap2", "box-ortu2", "box-fpeople2"].forEach(function (i) { $(i).classList.toggle("hide", !nikah); });
+    window.KREASI_THEME_PRESET = d.themeStyle && typeof d.themeStyle === "object"
+      ? { themeStyle: d.themeStyle, galleryAnimation: ["fade", "zoom", "slide"].indexOf(d.galleryAnimation) >= 0 ? d.galleryAnimation : "fade" }
+      : undefined;
   }
 
   function enc(o) {
@@ -236,7 +239,10 @@ assets/foto/maroon-8.webp</textarea></div></div>
   function page(name) { return new URL(name, location.href).href; }
   function valid(d) {
     if (!d.names[0]) { alert("Isi nama panggilan dulu."); return false; }
-    if (!d.date) { alert("Isi tanggal acara."); return false; }
+    var eventDate = d.date ? new Date(d.date) : null;
+    if (!eventDate || isNaN(eventDate.getTime())) { alert("Isi tanggal dan jam acara yang valid."); return false; }
+    var rsvpDigits = String(d.rsvpWa || "").replace(/\D/g, "");
+    if (rsvpDigits.length < 9 || rsvpDigits.length > 15) { alert("Nomor WhatsApp RSVP wajib berisi 9–15 digit."); return false; }
     if (d.kode && !/^[a-z0-9-]{1,40}$/.test(d.kode)) { alert("Kode pesanan hanya boleh huruf kecil, angka, dan tanda strip."); return false; }
     return true;
   }
