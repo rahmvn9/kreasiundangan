@@ -1,4 +1,5 @@
 /* ---------- dasar demo ---------- */
+body.t-foto{--bg:#fbf7f0;--alt:#f2e8dc;--card:#fffdf9;--ink:#49372e;--line:#e5d4c0;--accent:#b18a52;--on-accent:#fff;--cover-bg:linear-gradient(160deg,#fbf7f0,#b18a52);--cover-ink:#49372e;--cover-btn:#b18a52;--cover-btn-ink:#fff;--hero-bg:linear-gradient(160deg,#fbf7f0,#b18a52);--g1:#b18a52;--g2:#f2e8dc;--head:"Cormorant Garamond",serif;--body:"Montserrat",sans-serif;--card-radius:8px;--field-radius:8px;--btn-radius:999px;--avatar-radius:50%;--avatar-bg:#f2e8dc;}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased}
