@@ -196,7 +196,7 @@ assets/foto/maroon-8.webp</textarea></div></div>
       loveStoryTitle: $("storytitle").value.trim(), loveStoryHeading: $("storyheading").value.trim(),
       loveStory: [1,2,3].map(function(i){return {title:$("st"+i+"title").value.trim(),date:$("st"+i+"date").value.trim(),text:$("st"+i+"text").value.trim()};}).filter(function(x){return x.title||x.text;}),
       galleryAnimation: window.KREASI_THEME_PRESET && window.KREASI_THEME_PRESET.galleryAnimation || "fade",
-      themeStyle: window.KREASI_THEME_PRESET && window.KREASI_THEME_PRESET.themeStyle || undefined,
+      themeStyle: window.KREASI_THEME_PRESET && window.KREASI_THEME_PRESET.themeStyle || ($("tema").value === "t-foto" ? { accent:"#b18a52", background:"#fbf7f0", alternate:"#f2e8dc", ink:"#49372e", headingFont:"Cormorant Garamond", bodyFont:"Montserrat", ornament:"floral", radius:"8px", coverStyle:"soft", frameStyle:"thin", sectionBackgrounds:{ home:"assets/foto/studio-krem.webp", people:"assets/foto/jas-krem.webp", events:"assets/foto/taman-putih.webp", gallery:"assets/foto/maroon-5.webp", rsvp:"assets/foto/maroon-3.webp", wallet:"assets/foto/maroon-9.webp" } } : undefined),
       events: [],
       coverImg: $("fcover").value.trim(), coverPos: "center 20%",
       heroImg: $("fhero").value.trim(), heroPos: "center 20%",
