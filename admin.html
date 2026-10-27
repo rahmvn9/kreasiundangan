@@ -219,12 +219,19 @@ assets/foto/maroon-8.webp</textarea></div></div>
   }
   function fill(d) {
     var set = function (id, v) { if ($(id) && v != null) $(id).value = v; };
-    set("tema", d.theme); set("jenis", d.jenis || (d.kind === "nikah" ? "nikah" : "lain"));
+    var n = Array.isArray(d.names) ? d.names : [];
+    var p = Array.isArray(d.people) ? d.people : [];
+    var inferredKind = d.jenis || (d.kind === "nikah" || n.length > 1 || p.length > 1 ? "nikah" : "lain");
+    set("tema", d.theme); set("jenis", inferredKind);
     set("heading", d.heading); set("kode", d.kode);
-    var n = d.names || [], p = d.people || [];
-    set("nama1", n[0]); set("nama2", n[1]);
-    set("lengkap1", p[0] && p[0].name); set("ortu1", p[0] && p[0].sub); set("fpeople1",p[0]&&p[0].photo);
-    set("lengkap2", p[1] && p[1].name); set("ortu2", p[1] && p[1].sub); set("fpeople2",p[1]&&p[1].photo);
+    set("nama1", n[0] || (p[0] && p[0].name) || "");
+    set("nama2", n[1] || (p[1] && p[1].name) || "");
+    set("lengkap1", p[0] && p[0].name || n[0] || "");
+    set("ortu1", p[0] && p[0].sub || "");
+    set("fpeople1", p[0] && p[0].photo || "");
+    set("lengkap2", p[1] && p[1].name || n[1] || "");
+    set("ortu2", p[1] && p[1].sub || "");
+    set("fpeople2", p[1] && p[1].photo || "");
     set("storytitle",d.loveStoryTitle);set("storyheading",d.loveStoryHeading);
     [1,2,3].forEach(function(i){var x=(d.loveStory||[])[i-1]||{};set("st"+i+"title",x.title||"");set("st"+i+"date",x.date||"");set("st"+i+"text",x.text||"");});
     set("tanggal", d.date); set("rsvp", d.rsvpWa);
