@@ -138,7 +138,7 @@ details{margin-top:12px} summary{cursor:pointer;font-weight:700;font-size:.85rem
       var row = document.createElement("div"); row.className = "item";
       row.innerHTML = '<div><b>' + esc(it.name) + '</b>' + (it.num ? ' <span class="hint">(' + esc(it.num) + ')</span>' : '') + '<small>' + esc(it.link.length > 110 ? it.link.slice(0, base.length + 14) + "…&to=" + encodeURIComponent(it.name) : it.link) + '</small></div>' +
         '<div class="acts"><button class="btn alt sm" data-i="' + i + '" data-k="c">Salin link</button>' +
-        '<a class="btn wa sm" target="_blank" rel="noopener" href="' + esc(it.wa) + '">Kirim WhatsApp</a></div>';
+        (it.num ? '<a class="btn wa sm" target="_blank" rel="noopener" href="' + esc(it.wa) + '">Kirim WhatsApp</a>' : '') + '</div>';
       box.appendChild(row);
     });
     box.querySelectorAll('[data-k="c"]').forEach(function (b) { b.onclick = function () { copy(links[b.getAttribute("data-i")].link, b); }; });
