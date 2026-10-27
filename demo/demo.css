@@ -193,3 +193,15 @@ body.frame-thin #cover:not(.photo)::before{content:"";position:absolute;inset:18
 body.frame-double #cover:not(.photo)::before{content:"";position:absolute;inset:14px;border:3px double var(--cover-btn);pointer-events:none}
 body.frame-ornate #cover:not(.photo)::before{content:"";position:absolute;inset:18px;border:1px solid var(--cover-btn);border-radius:48% 48% 8px 8px;pointer-events:none}
 body.frame-none #cover:not(.photo)::before{content:none!important;display:none!important}
+
+
+/* Fitur adaptasi dari pola interaksi undangan open-source */
+.theme-toggle{position:fixed;right:16px;top:16px;z-index:80;width:42px;height:42px;border:1px solid var(--line);border-radius:50%;background:var(--card);color:var(--ink);box-shadow:0 5px 18px #0002;cursor:pointer;font-size:20px}
+.invite-nav{position:fixed;z-index:75;bottom:0;left:50%;transform:translateX(-50%);width:min(480px,100%);display:flex;justify-content:space-around;gap:2px;padding:8px 4px calc(8px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--card) 92%,transparent);border:1px solid var(--line);border-bottom:0;border-radius:16px 16px 0 0;backdrop-filter:blur(12px);box-shadow:0 -5px 22px #0001}
+.invite-nav a{color:var(--ink);text-decoration:none;font-size:.72rem;font-weight:700;padding:8px 5px;border-radius:8px}
+.invite-nav a:focus-visible,.theme-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pad-bar{height:100px!important}
+.gallery-lightbox[hidden]{display:none!important}.gallery-lightbox{position:fixed;inset:0;z-index:300;background:rgba(10,10,12,.94);display:grid;place-items:center;padding:60px 16px 24px}.gallery-lightbox img{display:block;max-width:min(100%,1000px);max-height:80vh;object-fit:contain;box-shadow:0 12px 40px #0008}.lightbox-close{position:absolute;top:16px;right:16px;border:0;border-radius:50%;width:44px;height:44px;font-size:30px;line-height:1;background:#fff;color:#222;cursor:pointer}.lightbox-open{position:absolute;top:25px;left:16px;color:#fff;font-size:.9rem}
+body.user-dark{--bg:#15171b;--alt:#202329;--card:#272b32;--ink:#f1eee7;--line:#454b55;--cover-ink:#f5f0e5;--hero-bg:linear-gradient(160deg,#202329,#15171b)}body.user-dark .s:not(.hero):not(.closing){background:var(--bg);color:var(--ink)}body.user-dark .quote,body.user-dark .gallery,body.user-dark .love-story{background:var(--alt)}body.user-dark .event,body.user-dark .story-item,body.user-dark .wish{background:var(--card);color:var(--ink)}body.user-dark input,body.user-dark select,body.user-dark textarea{background:#202329;color:var(--ink);border-color:var(--line)}body.user-dark .invite-nav{background:rgba(25,27,31,.94)}
+.g .ph img[role=button]{cursor:zoom-in}
+@media(prefers-reduced-motion:reduce){.gallery-lightbox,.theme-toggle,.invite-nav{scroll-behavior:auto}}
