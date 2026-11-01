@@ -149,6 +149,13 @@ assets/foto/maroon-8.webp</textarea></div></div>
   document.querySelectorAll("[data-brand]").forEach(function (e) { e.textContent = window.SITE.brand; });
   var $ = function (id) { return document.getElementById(id); };
   var DEF = { nikah: "The Wedding of", ultah: "Ulang Tahun", khitan: "Syukuran Khitan", lain: "Undangan" };
+  function createInvitationId() {
+    if (window.crypto && typeof window.crypto.randomUUID === "function") return window.crypto.randomUUID();
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) { var r = Math.random() * 16 | 0; return (c === "x" ? r : (r & 3 | 8)).toString(16); });
+  }
+  var activeInvitationId = createInvitationId();
+  var activeInvitationSlug = "inv-" + activeInvitationId.replace(/-/g, "").slice(0, 20);
+  var loadedOrderCode = "";
 
   // dua kolom acara
   var evHtml = "";
@@ -207,7 +214,8 @@ assets/foto/maroon-8.webp</textarea></div></div>
       rsvpWa: $("rsvp").value.trim(),
       closingTitle: $("cjudul").value.trim(), closing: $("closing").value.trim(),
       kode: $("kode").value.trim(),
-      slug: ($("kode").value.trim() || ([$("nama1").value.trim(), $("nama2").value.trim()].filter(Boolean).join("-") + "-" + ($("tanggal").value || "").slice(0,10))).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "").slice(0,120)
+      invitationId: activeInvitationId,
+      slug: activeInvitationSlug
     };
     [1, 2].forEach(function (n) {
       var t = $("e" + n + "t").value.trim(), p = $("e" + n + "p").value.trim();
@@ -219,12 +227,17 @@ assets/foto/maroon-8.webp</textarea></div></div>
     return d;
   }
   function fill(d) {
-    var set = function (id, v) { if ($(id) && v != null) $(id).value = v; };
+    var set = function (id, v) { if ($(id)) $(id).value = v == null ? "" : v; };
+    if (!d || typeof d !== "object" || Array.isArray(d)) throw new Error("Format pesanan tidak valid.");
     var n = Array.isArray(d.names) ? d.names : [];
     var p = Array.isArray(d.people) ? d.people : [];
     var inferredKind = d.jenis || (d.kind === "nikah" || n.length > 1 || p.length > 1 ? "nikah" : "lain");
-    set("tema", d.theme); set("jenis", inferredKind);
-    set("heading", d.heading); set("kode", d.kode);
+    // Kosongkan kolom opsional yang tidak ada agar data pesanan sebelumnya tidak terbawa.
+    activeInvitationId = typeof d.invitationId === "string" && d.invitationId.trim() ? d.invitationId.trim() : createInvitationId();
+    activeInvitationSlug = typeof d.slug === "string" && d.slug.trim() ? d.slug.trim().toLowerCase() : "inv-" + activeInvitationId.replace(/[^a-z0-9]/gi, "").slice(0, 20).toLowerCase();
+    loadedOrderCode = typeof d.kode === "string" ? d.kode.trim().toLowerCase() : "";
+    set("tema", d.theme || "t-maroon"); set("jenis", inferredKind);
+    set("heading", d.heading); set("kode", d.kode || d.slug || "");
     set("nama1", n[0] || (p[0] && p[0].name) || "");
     set("nama2", n[1] || (p[1] && p[1].name) || "");
     set("lengkap1", p[0] && p[0].name || n[0] || "");
@@ -297,8 +310,22 @@ assets/foto/maroon-8.webp</textarea></div></div>
     else prompt("Salin manual:", text);
   }
 
-  $("b-link").onclick = function () {
+  async function codeIsAvailable(code) {
+    if (!code) return true;
+    if (loadedOrderCode && code.toLowerCase() === loadedOrderCode) return true;
+    var url = "https://api.github.com/repos/rahmvn9/kreasiundangan/contents/pesanan/" + encodeURIComponent(code) + ".json?ref=main";
+    try {
+      var response = await fetch(url, { headers: { Accept: "application/vnd.github+json" }, cache: "no-store" });
+      if (response.status === 404) return true;
+      if (response.ok) { alert("Kode pesanan \"" + code + "\" sudah digunakan. Gunakan kode lain agar file pelanggan tidak tertimpa."); return false; }
+      alert("Kode pesanan belum dapat diverifikasi ke GitHub (HTTP " + response.status + "). Coba lagi sebelum membuat link atau mengunduh JSON.");
+      return false;
+    } catch (error) { alert("Tidak dapat memeriksa kode pesanan ke GitHub. Periksa koneksi internet lalu coba lagi."); return false; }
+  }
+
+  $("b-link").onclick = async function () {
     var d = collect(); if (!valid(d)) return;
+    if (d.kode && !(await codeIsAvailable(d.kode))) return;
     var code = enc(d);
     var longInv = page("undangan.html") + "?d=" + code;
     var longGuest = page("tamu.html") + "?d=" + code;
@@ -321,9 +348,10 @@ assets/foto/maroon-8.webp</textarea></div></div>
     var d = collect(); if (!valid(d)) return;
     window.open(page("undangan.html") + "?d=" + enc(d) + "&to=Bapak%20Ahmad", "_blank");
   };
-  $("b-json").onclick = function () {
+  $("b-json").onclick = async function () {
     var d = collect(); if (!valid(d)) return;
     if (!d.kode) { alert("Isi kode pesanan dulu untuk memberi nama file."); return; }
+    if (!(await codeIsAvailable(d.kode))) return;
     var blob = new Blob([JSON.stringify(d, null, 2)], { type: "application/json" });
     var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = d.kode + ".json";
     document.body.appendChild(a); a.click(); a.remove();
