@@ -334,18 +334,41 @@ assets/foto/maroon-8.webp</textarea></div></div>
     var longInv = page("undangan.html") + "?d=" + code;
     var longGuest = page("tamu.html") + "?d=" + code;
     var html = '<p class="ok">Link siap dipakai.</p>' +
-      '<h3>1. Link undangan (langsung jadi, tanpa unggah apa pun)</h3><code>' + esc(shorten(longInv)) + '</code><button class="btn alt" data-c="' + esc(longInv) + '">Salin link undangan (tambahkan &amp;to=NamaTamu)</button>' +
+      '<h3>1. Link undangan (langsung jadi, tanpa unggah apa pun)</h3><code>' + esc(shorten(longInv)) + '</code><button class="btn alt" data-c="' + esc(longInv) + '">Salin link undangan panjang</button>' +
       '<h3>2. Link pembuat tamu untuk pelanggan</h3><code>' + esc(shorten(longGuest)) + '</code><button class="btn alt" data-c="' + esc(longGuest) + '">Salin link untuk pelanggan</button>';
     if (d.kode) {
-      html += '<h3>3. Versi pendek (butuh file pesanan diunggah)</h3>' +
-        '<p class="hint">Unduh file .json, lalu unggah ke folder <b>pesanan/</b> di GitHub dengan nama <b>' + esc(d.kode) + '.json</b>. Setelah itu dua link ini aktif:</p>' +
-        '<code>' + esc(page("undangan.html") + "?o=" + d.kode) + '</code>' +
-        '<code>' + esc(page("tamu.html") + "?o=" + d.kode) + '</code>' +
-        '<button class="btn alt" data-c="' + esc(page("tamu.html") + "?o=" + d.kode) + '">Salin link pendek untuk pelanggan</button>';
+      var shortInvitation = page("undangan.html") + "?o=" + encodeURIComponent(d.kode);
+      var shortGuestBuilder = page("tamu.html") + "?o=" + encodeURIComponent(d.kode);
+      html += '<h3>3. Link undangan pendek + nama tamu</h3>' +
+        '<p class="hint">Masukkan nama tamu, lalu salin link personal. Link pendek aktif setelah file <b>' + esc(d.kode) + '.json</b> diunggah ke folder <b>pesanan/</b> di GitHub.</p>' +
+        '<div class="row one"><div><label for="guest-name-link">Nama Tamu</label><input id="guest-name-link" placeholder="Contoh: Budi dan Keluarga"></div></div>' +
+        '<code id="guest-short-link">' + esc(shortInvitation + "&to=NamaTamu") + '</code>' +
+        '<button class="btn alt" id="copy-guest-short" type="button">Salin link undangan nama tamu</button>' +
+        '<h3>Link pendek pembuat tamu</h3><code>' + esc(shortGuestBuilder) + '</code>' +
+        '<button class="btn alt" data-c="' + esc(shortGuestBuilder) + '">Salin link pendek untuk pelanggan</button>';
     }
     html += '<p class="hint" style="margin-top:10px"><b>Penting:</b> data belum otomatis tersimpan di server. Link panjang menyimpan data di dalam URL dan langsung bisa dibuka pelanggan, tetapi jika data diubah kamu harus membuat link baru. Agar link pendek tetap aktif dan data dapat diperbarui, unduh JSON pesanan lalu unggah ke folder <b>pesanan/</b> di GitHub dengan nama kode pesanan + <b>.json</b>. Draft lokal hanya tersimpan di browser/perangkat ini.</p>';
     $("out").innerHTML = html; $("out").classList.add("show");
     $("out").querySelectorAll("[data-c]").forEach(function (b) { b.onclick = function () { copy(b.getAttribute("data-c"), b); }; });
+    var guestNameInput = $("guest-name-link");
+    var guestShortOutput = $("guest-short-link");
+    var copyGuestShort = $("copy-guest-short");
+    if (guestNameInput && guestShortOutput && copyGuestShort) {
+      var updateGuestShortLink = function () {
+        var shortUrl = new URL(page("undangan.html"));
+        shortUrl.searchParams.set("o", d.kode);
+        var guestName = guestNameInput.value.trim();
+        if (guestName) shortUrl.searchParams.set("to", guestName);
+        else shortUrl.searchParams.set("to", "NamaTamu");
+        guestShortOutput.textContent = shortUrl.href;
+      };
+      guestNameInput.addEventListener("input", updateGuestShortLink);
+      copyGuestShort.onclick = function () {
+        if (!guestNameInput.value.trim()) { alert("Isi nama tamu terlebih dahulu."); guestNameInput.focus(); return; }
+        updateGuestShortLink();
+        copy(guestShortOutput.textContent, copyGuestShort);
+      };
+    }
     $("out").scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
   $("b-prev").onclick = function () {
