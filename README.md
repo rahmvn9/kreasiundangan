@@ -15,7 +15,7 @@ Harga paket contoh berada di `index.html`. Periksa dan ubah sebelum situs dipubl
 1. Buka `admin.html` di situs. Halaman admin tidak ditautkan dari menu utama; simpan alamatnya secara pribadi.
 2. Isi data pesanan, lalu klik **Buat link**.
 3. Gunakan **Pratinjau** untuk memeriksa undangan sebelum dikirim.
-4. Pilih salah satu metode berikut.
+4. Pilih salah satu metode berikut. Hasil **Buat Link** juga menyediakan kolom **Nama Tamu** untuk membuat link undangan pendek personal.
 
 ### Metode A — link panjang (langsung dapat digunakan)
 
@@ -23,7 +23,7 @@ Admin membuat URL dengan parameter `?d=...` yang berisi data pesanan. Tidak perl
 
 **Penting — privasi dan penyalahgunaan:** isi parameter `?d=` hanya dikodekan Base64URL, bukan dienkripsi atau ditandatangani. Siapa pun yang memiliki URL dapat membaca data di dalamnya, dan siapa pun dapat menyusun URL dengan data atau foto sendiri yang akan ditampilkan pada domain situs ini. Jangan masukkan nomor identitas, alamat rumah pribadi, atau data sensitif. Untuk pesanan sungguhan, gunakan layanan backend yang memvalidasi data dan memberi akses terbatas; validasi JavaScript di halaman statis tidak dapat membuktikan bahwa data berasal dari admin.
 
-Untuk menyertakan nama tamu di link undangan, tambahkan parameter `&to=NamaTamu` (gunakan URL encoding untuk spasi dan karakter khusus).
+Untuk menyertakan nama tamu di link undangan panjang, gunakan parameter `&to=NamaTamu` (gunakan URL encoding untuk spasi dan karakter khusus). Admin menyediakan kolom **Nama Tamu** dan tombol salin link personal agar parameter ini dibuat otomatis.
 
 **Catatan:** perubahan data tidak otomatis memperbarui link panjang. Buat dan kirim ulang link setelah mengubah data pesanan.
 
@@ -35,6 +35,16 @@ Untuk menyertakan nama tamu di link undangan, tambahkan parameter `&to=NamaTamu`
 4. Setelah file tersedia di situs, link berikut dapat digunakan:
    - `undangan.html?o=fajar-salsa`
    - `tamu.html?o=fajar-salsa`
+
+Untuk link undangan personal, tambahkan nama tamu pada parameter `to`, misalnya:
+
+`undangan.html?o=fajar-salsa&to=Budi%20dan%20Keluarga`
+
+Di Admin Pesanan, masukkan nama pada kolom **Nama Tamu** di bagian hasil **Buat Link**, lalu klik **Salin link undangan nama tamu**. Link personal ini memakai kode pesanan sehingga lebih pendek daripada link panjang `?d=`. Pastikan file JSON sudah diunggah agar link dapat dibuka.
+
+Sebelum membuat link atau mengunduh JSON, admin mencoba memeriksa apakah `pesanan/<kode>.json` sudah ada di repository GitHub. Jika kode sudah terpakai, proses dihentikan agar file lama tidak tertimpa. Pemeriksaan ini memerlukan koneksi internet dan akses GitHub API; pemeriksaan bukan penguncian transaksi, sehingga dua admin yang membuat kode sama pada saat bersamaan tetap perlu menghindarinya.
+
+Setiap pesanan juga memiliki `invitationId` dan `slug` unik untuk memisahkan catatan RSVP di Supabase. Saat mengimpor pesanan lama tanpa ID, sistem membuat ID/slug baru. Catatan RSVP lama tetap menggunakan slug lama dan tidak otomatis dipindahkan.
 
 Jika file belum diunggah atau kode tidak cocok, link pendek tidak dapat memuat data pesanan. Halaman pembuat link tamu akan menampilkan status gagal memuat.
 
@@ -51,12 +61,15 @@ Gunakan foto milik sendiri atau yang memiliki izin penggunaan. Jangan menyimpan 
 
 ## RSVP dan privasi data
 
-Situs ini bersifat statis; tidak ada backend untuk menyimpan RSVP atau ucapan secara permanen.
+Halaman undangan tetap disajikan sebagai situs statis, tetapi penyimpanan RSVP menggunakan Supabase jika konfigurasi tersedia.
 
-- Pada undangan pelanggan, RSVP disiapkan untuk dikirim melalui WhatsApp ke nomor tuan rumah yang diisi di admin.
-- Pengunjung masih perlu menekan tombol **Kirim** di WhatsApp. Membuka WhatsApp bukan berarti pesan sudah terkirim.
-- Jika nomor WhatsApp tuan rumah belum diatur, pengunjung akan diberi tahu bahwa RSVP belum terkirim.
-- Pada halaman demo, ucapan hanya ditampilkan sementara di browser dan tidak disimpan ke server.
+- RSVP dan ucapan dikirim ke tabel `public.guestbook` dengan kolom `invitation_slug`, nama tamu, kehadiran, pesan, dan waktu.
+- `invitation_slug` dipakai untuk memisahkan data tiap undangan. Pastikan setiap pesanan menggunakan ID/slug unik; jangan mengubah slug secara manual untuk pesanan yang sudah menerima RSVP.
+- Setelah RSVP disimpan, WhatsApp dapat dibuka untuk mengirim konfirmasi kepada tuan rumah. Pengunjung tetap harus menekan tombol **Kirim** di WhatsApp; membuka WhatsApp bukan berarti pesan sudah terkirim.
+- Jika Supabase belum dikonfigurasi, fitur penyimpanan RSVP tidak tersedia. Periksa `assets/supabase-config.js` dan jalankan SQL pada `supabase/schema.sql` di Supabase SQL Editor.
+- Gunakan hanya Supabase publishable/anon key di file frontend. Jangan pernah memasukkan secret/service-role key.
+- Kebijakan RLS pada `supabase/schema.sql` mengizinkan pengunjung mengirim RSVP, sedangkan pembacaan, perubahan, dan penghapusan catatan dibatasi untuk admin yang terdaftar di `public.admin_users`. Halaman undangan publik tidak menampilkan seluruh riwayat buku tamu.
+- `buku-tamu.html` digunakan admin untuk melihat dan mengelola catatan setelah login Supabase. Pastikan akun admin telah ditambahkan ke `public.admin_users` sesuai petunjuk SQL.
 
 ## Membuat tema baru (pengelola)
 
@@ -77,9 +90,12 @@ Gunakan parameter `to` pada URL, misalnya:
 
 ```
 index.html             halaman utama dan daftar tema
-admin.html             formulir pengelolaan pesanan
-undangan.html          halaman undangan pelanggan; membaca ?d= atau ?o=
+admin.html             formulir pengelolaan pesanan dan link personal
+undangan.html          halaman undangan pelanggan; membaca ?d= atau ?o= dan ?to=
 tamu.html              pembuat link per tamu; membaca ?d= atau ?o=
+buku-tamu.html         panel admin untuk buku tamu (Supabase Auth)
+supabase/schema.sql    tabel guestbook, admin_users, dan kebijakan RLS
+assets/supabase-config.js konfigurasi URL dan publishable key Supabase
 pesanan/<kode>.json    data pesanan untuk link pendek
 assets/config.js       konfigurasi brand, WhatsApp, dan tema
 assets/style.css       gaya halaman utama
